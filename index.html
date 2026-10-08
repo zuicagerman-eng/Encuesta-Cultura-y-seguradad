@@ -358,7 +358,6 @@ var SECCIONES = [
 
 /* ====================== LÓGICA ====================== */
 
-var CLAVE_BORRADOR = "encuesta-cultura-hse-2026-v2";
 var respuestas = {};
 var paso = 0;              // 0 = bienvenida, 1..N = secciones, N+1 = resumen, N+2 = fin
 var N = SECCIONES.length;
@@ -372,16 +371,6 @@ function obligatoria(p) { return tipoDe(p) !== "texto"; }
 function toast(msg) {
   var t = $("toast"); t.textContent = msg; t.classList.add("on");
   clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove("on"); }, 2600);
-}
-
-function guardarBorrador() {
-  try { localStorage.setItem(CLAVE_BORRADOR, JSON.stringify({ r: respuestas, p: paso })); } catch (e) {}
-}
-function leerBorrador() {
-  try { return JSON.parse(localStorage.getItem(CLAVE_BORRADOR) || "null"); } catch (e) { return null; }
-}
-function borrarBorrador() {
-  try { localStorage.removeItem(CLAVE_BORRADOR); } catch (e) {}
 }
 
 function pintarInicio() {
@@ -448,7 +437,6 @@ function alCambiar(ev) {
   caja.classList.toggle("lista", ok && t !== "texto");
   if (ok) caja.classList.remove("falta");
   if (!ok && t !== "texto") delete respuestas[p.col];
-  guardarBorrador();
   actualizarNav();
   if (ev.type === "change" && (t === "likert" || t === "opcion")) siguienteSinResponder(caja);
 }
@@ -480,7 +468,6 @@ function ir(n, atras) {
   $("hstep").textContent = n === 0 ? "Bienvenida" : n <= N ? "Sección " + n + " de " + N : n === N + 1 ? "Enviar" : "Listo";
   window.scrollTo(0, 0);
   actualizarNav();
-  guardarBorrador();
 }
 
 function actualizarNav() {
@@ -530,7 +517,6 @@ function enviar() {
   var ok = function (r) {
     enviando = false;
     if (r && r.ok === false) return fallo(r.error);
-    borrarBorrador();
     $("fin").innerHTML = '<div class="ok">✓</div><h2>¡Gracias por participar!</h2>' +
       "<p>Sus respuestas quedaron registradas de forma anónima. Su opinión nos ayuda a construir una cultura de Salud, Seguridad y Ambiente más fuerte en Holcim Colombia.</p>" +
       (r && r.prueba ? '<div class="errbox" style="border-left-color:var(--gold)"><b>Vista previa:</b> esta respuesta no se guardó porque la encuesta todavía no está conectada a Google Sheets (falta <code>URL_WEBAPP</code>).</div>' : "") +
@@ -539,7 +525,7 @@ function enviar() {
   var fallo = function (msg) {
     enviando = false;
     $("fin").innerHTML = '<div class="ok" style="background:var(--danger)">!</div><h2>No se pudo enviar</h2>' +
-      "<p>Sus respuestas siguen guardadas en este dispositivo. Revise la conexión e intente de nuevo.</p>" +
+      "<p>Sus respuestas siguen en pantalla. Revise la conexión e intente de nuevo sin cerrar esta ventana.</p>" +
       '<div class="errbox"><b>Detalle:</b> ' + esc(msg || "Error de conexión") + "</div>" +
       '<button class="big" id="btnReintentar">Reintentar envío</button>';
   };
@@ -567,34 +553,6 @@ function reiniciar() {
   ir(0, true);
 }
 
-function restaurar(b) {
-  respuestas = b.r || {};
-  SECCIONES.forEach(function (s) {
-    s.preguntas.forEach(function (p) {
-      var v = respuestas[p.col], t = tipoDe(p), caja = $(p._id);
-      if (v === undefined) return;
-      if (t === "likert") {
-        var ei = ESCALA.map(function (e) { return e.valor; }).indexOf(v);
-        if (ei < 0) { delete respuestas[p.col]; return; }
-        $(p._id + "_" + ei).checked = true;
-      } else if (t === "opcion") {
-        var oi = OPCIONES[p.op].indexOf(v);
-        if (oi < 0) { delete respuestas[p.col]; return; }
-        $(p._id + "_" + oi).checked = true;
-      } else {
-        var el = caja.querySelector("select, textarea");
-        el.value = v;
-        if (t === "lista" && el.value !== v) { delete respuestas[p.col]; return; }
-        if (t === "texto") caja.querySelector(".cnt span").textContent = v.length;
-      }
-      if (t !== "texto") caja.classList.add("lista");
-    });
-  });
-  var p = Math.min(Math.max(+b.p || 0, 0), N + 1);
-  ir(p);
-  if (p > 0) toast("Retomamos donde iba");
-}
-
 function iniciar() {
   pintarInicio();
   pintarSecciones();
@@ -608,8 +566,8 @@ function iniciar() {
     if (ev.target.id === "btnOtra") reiniciar();
     if (ev.target.id === "btnReintentar") { ir(N + 1); enviar(); }
   });
-  var b = leerBorrador();
-  if (b && b.r && Object.keys(b.r).length) restaurar(b);
+  // Versiones anteriores guardaban el avance en el navegador; se limpia.
+  try { localStorage.removeItem("encuesta-cultura-hse-2026"); localStorage.removeItem("encuesta-cultura-hse-2026-v2"); } catch (e) {}
   actualizarNav();
 }
 if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);

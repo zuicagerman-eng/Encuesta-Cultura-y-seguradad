@@ -9,8 +9,8 @@ funcionando.
 
 - `index.html` — la encuesta completa en un solo archivo (estilos, logo y JavaScript adentro).
   Bienvenida, 9 secciones (datos generales + 8 dimensiones), revisión y envío. Valida las
-  preguntas obligatorias, guarda el avance en el dispositivo si se cierra la página y permite
-  "Enviar otra respuesta" para equipos compartidos en planta.
+  preguntas obligatorias y permite "Enviar otra respuesta" para equipos compartidos en planta.
+  No guarda nada en el navegador: al abrir o recargar siempre empieza en blanco.
 - `apps-script/Codigo.gs` — recibe la respuesta y la escribe en la hoja. Ubica cada columna por
   el texto del encabezado, no por posición. Si una pregunta no coincide con ninguna columna,
   rechaza el envío con un mensaje claro en vez de perder la respuesta.
