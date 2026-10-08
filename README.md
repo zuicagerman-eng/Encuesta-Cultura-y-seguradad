@@ -24,9 +24,9 @@ funcionando.
     `Reportes de problemas` (tipo, descripción, pantalla, contacto opcional, navegador, tamaño de
     pantalla, tema y último error), con la columna `Estado` en "Nuevo" para hacerle seguimiento.
     No incluye las respuestas de la encuesta.
-  - **Motivación**: al terminar las secciones 3 y 6 sale un mensaje ("Su opinión es importante
-    para nosotros", "Buscamos mejorar nuestra cultura") con el avance. Los textos están en
-    `MOTIVACION`, dentro del bloque `CONFIGURACIÓN`.
+  - **Motivación**: un solo mensaje, al terminar la última sección ("Su opinión es importante
+    para nosotros"), que se cierra a los 3 segundos. No hay emergentes en medio de la encuesta.
+    El texto está en `MOTIVACION`, dentro del bloque `CONFIGURACIÓN`.
   - **Caritas**: en las instrucciones, tocar una carita muestra qué significa esa opción
     (`ayuda` de cada opción en `ESCALA`). En las preguntas, la carita elegida suelta un aviso
     corto ("¡Anotado!") que no interrumpe.
