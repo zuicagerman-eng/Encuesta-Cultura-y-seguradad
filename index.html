@@ -330,6 +330,14 @@
   .invita small{color:var(--text-soft);font-size:13.5px}
   .invita button{margin-left:auto;flex:none}
 
+  /* En el celular el significado de la opción elegida sale dentro de la misma opción */
+  .lk .sig{display:none}
+  @media (max-width:820px){
+    input:checked + .lk .sig{display:block;margin-top:4px;font-size:13px;font-weight:500;line-height:1.4;color:rgba(255,255,255,.92);animation:sube .3s ease}
+    input:checked + .lk{align-items:flex-start}
+    input:checked + .lk .face{margin-top:2px}
+  }
+
   /* Nota con el significado al pasar el mouse por una carita de las preguntas */
   @media (min-width:821px) and (hover:hover) and (pointer:fine){
     .lk::after{content:attr(data-ayuda);position:absolute;bottom:calc(100% + 10px);left:50%;width:230px;transform:translate(-50%,6px);
@@ -367,8 +375,8 @@
     .lk{flex-direction:row;justify-content:flex-start;gap:12px;padding:10px 14px;font-size:14px;text-align:left}
     .lk .face{font-size:24px}
     .escala-demo{grid-template-columns:repeat(4,1fr);row-gap:8px}
-    .reaccion{left:auto;right:12px;top:50%;transform:translateY(-50%)}
-    @keyframes reaccion{0%{opacity:0;transform:translate(10px,-50%) scale(.6)}25%{opacity:1;transform:translate(0,-50%) scale(1.05)}75%{opacity:1;transform:translate(0,-50%)}100%{opacity:0;transform:translate(-14px,-50%)}}
+    .reaccion{left:auto;right:10px;top:9px;transform:none}
+    @keyframes reaccion{0%{opacity:0;transform:translateX(10px) scale(.6)}25%{opacity:1;transform:scale(1.05)}75%{opacity:1;transform:none}100%{opacity:0;transform:translateX(-14px)}}
   }
   @media (max-width:640px){
     .htit{display:none}
@@ -381,7 +389,8 @@
     .nbtn.pri{min-width:0;flex:1}
     .navinfo{display:none}
     .sicon{width:54px;height:54px;font-size:27px;border-radius:15px}
-    .panel{top:auto;bottom:0;height:88vh;width:100%;border-radius:22px 22px 0 0;transform:translateY(105%)}
+    .panel{top:auto;bottom:0;height:88vh;height:88dvh;width:100%;border-radius:22px 22px 0 0;transform:translateY(105%)}
+    .pbody{padding-bottom:calc(24px + env(safe-area-inset-bottom))}
     .panel::before{content:"";display:block;width:44px;height:5px;border-radius:3px;background:var(--line);margin:10px auto 0}
   }
   @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
@@ -822,7 +831,7 @@ function pintarSecciones() {
       if (t === "likert") {
         html += '<div class="likert" role="radiogroup" aria-label="' + esc(p.col) + '">' + ESCALA.map(function (e, ei) {
           return '<input type="radio" name="' + id + '" id="' + id + "_" + ei + '" value="' + ei + '">' +
-            '<label class="lk" for="' + id + "_" + ei + '" data-ayuda="' + esc(e.ayuda) + '" style="--c:' + e.color + '"><span class="face">' + e.cara + "</span>" + esc(e.valor) + "</label>";
+            '<label class="lk" for="' + id + "_" + ei + '" data-ayuda="' + esc(e.ayuda) + '" style="--c:' + e.color + '"><span class="face">' + e.cara + '</span><span class="lt">' + esc(e.valor) + '<small class="sig">' + esc(e.ayuda) + "</small></span></label>";
         }).join("") + "</div>";
       } else if (t === "opcion") {
         html += '<div class="chips" role="radiogroup">' + OPCIONES[p.op].map(function (o, oi) {
@@ -889,7 +898,9 @@ function siguienteSinResponder(caja) {
   var sec = caja.parentNode, qs = sec.querySelectorAll(".q:not(.coment)");
   for (var i = 0; i < qs.length; i++) {
     if (qs[i] !== caja && !qs[i].classList.contains("lista") && qs[i].compareDocumentPosition(caja) & Node.DOCUMENT_POSITION_PRECEDING) {
-      setTimeout(function (q) { return function () { q.scrollIntoView({ behavior: "smooth", block: "center" }); }; }(qs[i]), 260);
+      var espera = matchMedia("(max-width: 820px)").matches ? 1300 : 260;   // en el celular, tiempo para leer el significado
+      clearTimeout(siguienteSinResponder._t);
+      siguienteSinResponder._t = setTimeout(function (q) { return function () { q.scrollIntoView({ behavior: "smooth", block: "center" }); }; }(qs[i]), espera);
       return;
     }
   }
@@ -986,6 +997,10 @@ function explicarCara(i) {
   }
   caja.innerHTML = '<div class="burbuja" style="--c:' + e.color + ";--flecha:" + flecha + 'px"><span class="bc">' + e.cara + "</span>" +
     '<span><span class="bt"><b>' + esc(e.valor) + "</b>" + esc(e.ayuda) + "</span><small>Todas las opciones son válidas: lo importante es responder con sinceridad.</small></span></div>";
+  if (!CON_MOUSE) {
+    var r2 = caja.getBoundingClientRect(), tapa = 20;
+    if (r2.bottom > innerHeight - tapa) window.scrollBy({ top: r2.bottom - innerHeight + tapa + 16, behavior: "smooth" });
+  }
 }
 
 function ocultarCaras() {
@@ -1218,6 +1233,7 @@ function elegirPestana(n) {
 
 function abrirPanel(pestana, tipo) {
   pintarAyuda();
+  document.querySelector(".pbody").scrollTop = 0;   // siempre desde el inicio
   elegirPestana(pestana || "ayuda");
   if (tipo) {
     var r = document.querySelector('#tiposReporte input[value="' + tipo + '"]');
