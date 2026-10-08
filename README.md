@@ -39,8 +39,8 @@ funcionando.
   - `bienvenida-encuesta.gif`, `.mp4` y `.webm` — animación de 12 s que termina en el QR. Por
     WhatsApp el MP4 se ve más nítido. La encuesta la muestra al abrir, solo en computador.
 - **Computador primero**: en pantallas grandes con mouse la bienvenida arranca sola y el QR se
-  ve en la portada y al final, para que otros lo escaneen ("Ver QR en grande" lo amplía y trae el
-  enlace para copiar). En el celular no se muestra el QR (ya está en el celular) ni hay botones de
+  ve en la portada y al final, para que otros lo escaneen (con botones para copiar el enlace,
+  copiar la imagen del QR y descargarla). En el celular no se muestra el QR (ya está en el celular) ni hay botones de
   compartir, y la bienvenida queda en el botón "Ver bienvenida" para no gastar datos.
 - `apps-script/Codigo.gs` — recibe la respuesta y la escribe en la hoja. Ubica cada columna por
   el texto del encabezado, no por posición. Si una pregunta no coincide con ninguna columna,

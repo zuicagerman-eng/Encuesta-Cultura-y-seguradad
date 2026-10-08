@@ -343,13 +343,15 @@
      escanearlo con el celular). En el celular se comparte por enlace. */
   .solo-escritorio{display:none!important}
   .qrdesk{align-items:center;gap:30px;background:var(--surface);border-radius:20px;padding:24px 28px;margin-top:16px;box-shadow:var(--shadow);text-align:left}
-  .qrdesk .qrcaja{width:250px;margin:0;flex:none;padding:14px;border-radius:20px;box-shadow:0 0 0 6px rgba(151,209,59,.35)}
+  .qrdesk .qrcaja{width:300px;margin:0;flex:none;padding:14px;border-radius:20px;box-shadow:0 0 0 6px rgba(151,209,59,.35)}
   .qrdesk h3{font-size:21px;color:var(--text)}
   .qrdesk p{margin-top:8px;font-size:15px;line-height:1.55;color:var(--text-soft)}
   .qrdesk .url{margin-top:14px;font-size:13.5px;font-weight:600;color:var(--blue);word-break:break-all;filter:var(--acc-filter)}
-  .qrdesk .copiar{margin-top:12px;display:inline-flex;align-items:center;gap:8px;border:none;border-radius:999px;background:var(--green);color:#071a38;font-weight:800;font-size:14.5px;padding:11px 22px;cursor:pointer;transition:.2s}
+  .qrbtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .qrdesk .copiar{display:inline-flex;align-items:center;gap:8px;border:none;border-radius:999px;background:var(--green);color:#071a38;font-weight:800;font-size:14.5px;padding:11px 22px;cursor:pointer;transition:.2s}
   .qrdesk .copiar:hover{transform:translateY(-2px);filter:brightness(1.06)}
-  .qrdesk .copiar.copiado{background:var(--ok);color:#fff}
+  .qrdesk .copiar.alt{background:var(--surface-2);color:var(--text);box-shadow:inset 0 0 0 2px var(--line)}
+  .qrdesk .copiar.copiado{background:var(--ok);color:#fff;box-shadow:none}
   .fin .qrdesk{max-width:680px;margin:28px auto 0}
   @media (min-width:900px) and (hover:hover) and (pointer:fine){
     .solo-escritorio{display:flex!important}
@@ -453,7 +455,11 @@
       <div><h3>📱 ¿Prefiere responder en su celular?</h3>
         <p>Escanee este código con la cámara del celular y la encuesta se abre lista para responder. También puede mostrarlo a sus compañeros.</p>
         <div class="url" data-url></div>
-        <button class="copiar" type="button" data-copiar>🔗 Copiar enlace</button></div>
+        <div class="qrbtns">
+          <button class="copiar" type="button" data-copiar>🔗 Copiar enlace</button>
+          <button class="copiar alt" type="button" data-copiar-qr>📋 Copiar QR</button>
+          <button class="copiar alt" type="button" data-descargar-qr>⬇️ Descargar QR</button>
+        </div></div>
     </div>
 
     <div style="text-align:center"><button class="big" id="btnComenzar">Comenzar la encuesta <span>→</span></button></div>
@@ -1064,17 +1070,49 @@ function pintarQrs() {
   document.querySelectorAll("[data-url]").forEach(function (c) { c.textContent = URL_PUBLICA; });
 }
 
-// Un clic copia el enlace: el botón confirma y vuelve a su texto.
-function copiarEnlace(btn) {
+// El botón confirma lo que hizo y a los 2 segundos vuelve a su texto.
+function confirmar(btn, texto, aviso) {
   var original = btn.getAttribute("data-texto") || btn.innerHTML;
   btn.setAttribute("data-texto", original);
-  var listo = function () {
-    btn.innerHTML = "✓ Enlace copiado";
-    btn.classList.add("copiado");
-    toast("Enlace copiado: péguelo donde quiera compartirlo");
-    clearTimeout(btn._t);
-    btn._t = setTimeout(function () { btn.innerHTML = original; btn.classList.remove("copiado"); }, 2200);
+  btn.innerHTML = texto;
+  btn.classList.add("copiado");
+  if (aviso) toast(aviso);
+  clearTimeout(btn._t);
+  btn._t = setTimeout(function () { btn.innerHTML = original; btn.classList.remove("copiado"); }, 2200);
+}
+
+var QR_PNG = "difusion/qr-encuesta.png";   // 1200 × 1200, con el logo
+
+function imagenQr() {
+  return fetch(URL_PUBLICA + QR_PNG).then(function (r) { if (!r.ok) throw new Error(r.status); return r.blob(); });
+}
+
+// Copia la imagen del QR para pegarla en un correo, un chat o un documento.
+function copiarQr(btn) {
+  if (!navigator.clipboard || !window.ClipboardItem) { toast("Este navegador no deja copiar imágenes: use Descargar QR"); return; }
+  // La promesa va dentro del ClipboardItem para que Safari lo acepte en el mismo clic
+  navigator.clipboard.write([new ClipboardItem({ "image/png": imagenQr() })])
+    .then(function () { confirmar(btn, "✓ QR copiado", "QR copiado: péguelo con Ctrl + V"); })
+    .catch(function () { toast("No se pudo copiar el QR: use Descargar QR"); });
+}
+
+function descargarQr(btn) {
+  var bajar = function (href) {
+    var a = document.createElement("a");
+    a.href = href; a.download = "QR-Encuesta-Cultura-HSE-2026.png";
+    document.body.appendChild(a); a.click(); a.remove();
   };
+  imagenQr().then(function (blob) {
+    var u = URL.createObjectURL(blob);
+    bajar(u);
+    setTimeout(function () { URL.revokeObjectURL(u); }, 4000);
+    confirmar(btn, "✓ QR descargado");
+  }).catch(function () { window.open(URL_PUBLICA + QR_PNG, "_blank"); });
+}
+
+// Un clic copia el enlace.
+function copiarEnlace(btn) {
+  var listo = function () { confirmar(btn, "✓ Enlace copiado", "Enlace copiado: péguelo donde quiera compartirlo"); };
   var aMano = function () {
     var t = document.createElement("textarea");
     t.value = URL_PUBLICA; t.setAttribute("readonly", ""); t.style.position = "fixed"; t.style.opacity = "0";
@@ -1155,7 +1193,8 @@ function enviar() {
       (r.prueba ? '<div style="max-width:560px;margin:0 auto">' + NOTA_PRUEBA + "</div>" : "") +
       '<button class="big alt" id="btnOtra">Enviar otra respuesta</button>' +
       '<div class="qrdesk solo-escritorio"><div class="qrcaja" data-qr></div><div><h3>📲 Invite a sus compañeros</h3><p>Que escaneen este código con el celular para responder.</p>' +
-      '<div class="url" data-url></div><button class="copiar" type="button" data-copiar>🔗 Copiar enlace</button></div></div>';
+      '<div class="url" data-url></div><div class="qrbtns"><button class="copiar" type="button" data-copiar>🔗 Copiar enlace</button>' +
+      '<button class="copiar alt" type="button" data-copiar-qr>📋 Copiar QR</button><button class="copiar alt" type="button" data-descargar-qr>⬇️ Descargar QR</button></div></div></div>';
     pintarQrs();
     actualizarNav();
     confeti();
@@ -1339,7 +1378,12 @@ function iniciar() {
   });
   $("btnMoti").addEventListener("click", cerrarMotivacion);
   // Botones "Copiar enlace" (portada y final, solo en computador)
-  document.addEventListener("click", function (ev) { var b = ev.target.closest("[data-copiar]"); if (b) copiarEnlace(b); });
+  document.addEventListener("click", function (ev) {
+    var b;
+    if ((b = ev.target.closest("[data-copiar]"))) copiarEnlace(b);
+    else if ((b = ev.target.closest("[data-copiar-qr]"))) copiarQr(b);
+    else if ((b = ev.target.closest("[data-descargar-qr]"))) descargarQr(b);
+  });
   // Bienvenida animada
   var v = $("vidBienvenida");
   v.addEventListener("ended", cerrarBienvenida);
