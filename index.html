@@ -113,9 +113,23 @@
   .anon b{display:block;color:var(--anon-strong)}
   .anon span.ic{font-size:22px}
   .escala-demo{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:14px}
-  .escala-demo div{text-align:center;font-size:11.5px;color:var(--text-soft);line-height:1.25}
-  .escala-demo div b{display:block;font-size:22px;margin-bottom:4px;transition:transform .25s cubic-bezier(.3,1.8,.5,1)}
-  .escala-demo div:hover b{transform:scale(1.3) translateY(-2px)}
+  .escala-demo button{border:2px solid transparent;background:none;border-radius:14px;padding:8px 2px 6px;cursor:pointer;text-align:center;font-size:11.5px;color:var(--text-soft);line-height:1.25;transition:.2s;-webkit-tap-highlight-color:transparent}
+  .escala-demo button b{display:block;font-size:24px;margin-bottom:4px;transition:transform .3s cubic-bezier(.3,1.8,.5,1)}
+  .escala-demo button:hover b{transform:scale(1.3) translateY(-2px)}
+  .escala-demo button.on{border-color:var(--c);background:var(--surface-2);color:var(--text)}
+  .escala-demo button.on b{transform:scale(1.4) translateY(-3px);animation:baila .6s ease}
+  .escala-demo button:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+  @keyframes baila{0%,100%{rotate:0deg}25%{rotate:-14deg}75%{rotate:14deg}}
+  .toca{margin-top:12px;text-align:center;font-size:13px;font-weight:700;color:var(--cyan);filter:var(--acc-filter)}
+  .burbuja{position:relative;margin-top:14px;background:var(--surface-2);border:2px solid var(--c);border-radius:16px;padding:14px 16px;display:flex;gap:14px;align-items:center;animation:burbuja .45s cubic-bezier(.2,1.5,.4,1)}
+  .burbuja::before{content:"";position:absolute;top:-9px;left:var(--flecha);width:16px;height:16px;margin-left:-8px;background:var(--surface-2);border-left:2px solid var(--c);border-top:2px solid var(--c);transform:rotate(45deg);transition:left .3s ease}
+  .burbuja .bc{flex:none;font-size:40px;animation:baila .6s ease}
+  .burbuja b{display:block;font-size:15px;color:var(--c);filter:var(--acc-filter)}
+  .burbuja span{font-size:14px;line-height:1.45;color:var(--text-body)}
+  .burbuja small{display:block;margin-top:4px;font-size:12.5px;color:var(--text-soft)}
+  @keyframes burbuja{from{opacity:0;transform:translateY(-8px) scale(.94)}to{opacity:1;transform:none}}
+  .reaccion{position:absolute;left:50%;top:-6px;transform:translateX(-50%);pointer-events:none;white-space:nowrap;z-index:3;background:var(--c);color:#fff;font-size:12.5px;font-weight:800;padding:5px 10px;border-radius:999px;box-shadow:0 6px 16px rgba(0,0,0,.2);animation:reaccion .95s ease forwards}
+  @keyframes reaccion{0%{opacity:0;transform:translate(-50%,10px) scale(.6)}25%{opacity:1;transform:translate(-50%,-4px) scale(1.05)}70%{opacity:1;transform:translate(-50%,-10px)}100%{opacity:0;transform:translate(-50%,-16px)}}
 
   /* Encabezado de sección */
   .shead{display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;padding:12px 2px 6px}
@@ -262,6 +276,29 @@
   .repok p{color:var(--text-soft);font-size:14px;line-height:1.5;margin-top:8px}
   .nota-prueba{margin-top:12px;font-size:13px;border-left:4px solid var(--gold);background:var(--surface-2);border-radius:8px;padding:10px 12px;text-align:left;color:var(--text-body)}
 
+  /* Mensaje de motivación cada 3 secciones */
+  .moti{position:fixed;inset:0;z-index:55;display:grid;place-items:center;padding:20px;background:rgba(3,10,24,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .3s}
+  .moti.on{opacity:1;pointer-events:auto}
+  .mcard{position:relative;width:min(440px,100%);background:var(--surface);color:var(--text);border-radius:26px;padding:34px 26px 24px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.4);overflow:hidden;transform:scale(.7) translateY(30px);opacity:0}
+  .moti.on .mcard{animation:mentra .6s cubic-bezier(.2,1.5,.4,1) forwards}
+  @keyframes mentra{to{transform:none;opacity:1}}
+  .mcard::before{content:"";position:absolute;left:0;right:0;top:0;height:6px;background:linear-gradient(90deg,var(--cyan),var(--green))}
+  .anillo{position:relative;width:132px;height:132px;margin:0 auto 18px}
+  .anillo svg{width:100%;height:100%;transform:rotate(-90deg)}
+  .anillo circle{fill:none;stroke-width:10;stroke-linecap:round}
+  .anillo .fondo{stroke:var(--track)}
+  .anillo .lleno{stroke:url(#gradMoti);transition:stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1) .25s}
+  .anillo .em{position:absolute;inset:0;display:grid;place-items:center;font-size:56px;animation:flota 2.4s ease-in-out infinite}
+  @keyframes flota{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-6px) rotate(4deg)}}
+  .mcard h2{font-size:24px;line-height:1.2;color:var(--hero)}
+  .mcard h2 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .mcard p{margin-top:10px;font-size:15.5px;line-height:1.5;color:var(--text-soft)}
+  .mcard .avance{display:inline-block;margin-top:14px;font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ok-text);background:var(--ok-bg);border-radius:999px;padding:6px 14px}
+  .mcard .big{margin-top:20px}
+  .mbarra{position:absolute;left:0;bottom:0;height:4px;width:100%;background:var(--green);transform-origin:left;opacity:.7}
+  .moti.on .mbarra{animation:cuenta 6s linear forwards}
+  @keyframes cuenta{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+
   /* Confeti al terminar */
   .confeti{position:fixed;inset:0;pointer-events:none;z-index:70;overflow:hidden}
   .confeti i{position:absolute;left:var(--x0);top:var(--y0);width:9px;height:14px;border-radius:2px;background:var(--c);animation:cae var(--t) cubic-bezier(.2,.6,.4,1) var(--d) forwards;opacity:0}
@@ -271,7 +308,9 @@
     .likert{grid-template-columns:1fr;gap:6px}
     .lk{flex-direction:row;justify-content:flex-start;gap:12px;padding:10px 14px;font-size:14px;text-align:left}
     .lk .face{font-size:24px}
-    .escala-demo{grid-template-columns:repeat(4,1fr);row-gap:12px}
+    .escala-demo{grid-template-columns:repeat(4,1fr);row-gap:8px}
+    .reaccion{left:auto;right:12px;top:50%;transform:translateY(-50%)}
+    @keyframes reaccion{0%{opacity:0;transform:translate(10px,-50%) scale(.6)}25%{opacity:1;transform:translate(0,-50%) scale(1.05)}75%{opacity:1;transform:translate(0,-50%)}100%{opacity:0;transform:translate(-14px,-50%)}}
   }
   @media (max-width:640px){
     .htit{display:none}
@@ -327,6 +366,8 @@
         <li>La encuesta está diseñada con una escala de calificación para que, según su criterio, evalúe qué tan de acuerdo está con cada afirmación:</li>
       </ul>
       <div class="escala-demo" id="escalaDemo"></div>
+      <div class="toca" id="tocaCara">👆 Toque una carita para ver qué significa</div>
+      <div id="burbuja" aria-live="polite"></div>
     </div>
 
     <div style="text-align:center"><button class="big" id="btnComenzar">Comenzar la encuesta <span>→</span></button></div>
@@ -390,6 +431,22 @@
   </div>
 </aside>
 
+<!-- Mensaje de motivación: aparece al terminar las secciones 3 y 6 -->
+<div class="moti" id="moti" role="dialog" aria-modal="true" aria-labelledby="motiTitulo" inert>
+  <div class="mcard">
+    <div class="anillo">
+      <svg viewBox="0 0 120 120" aria-hidden="true"><defs><linearGradient id="gradMoti" x1="0" x2="1"><stop offset="0" stop-color="#1bb4e4"/><stop offset="1" stop-color="#97d13b"/></linearGradient></defs>
+        <circle class="fondo" cx="60" cy="60" r="52"/><circle class="lleno" id="motiAnillo" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="326.7"/></svg>
+      <span class="em" id="motiEmoji"></span>
+    </div>
+    <h2 id="motiTitulo"></h2>
+    <p id="motiTexto"></p>
+    <span class="avance" id="motiAvance"></span>
+    <div><button class="big" type="button" id="btnMoti">Seguir <span>→</span></button></div>
+    <div class="mbarra"></div>
+  </div>
+</div>
+
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -432,16 +489,27 @@ var OPCIONES = {
 // Escala de calificación: mismo texto y mayúsculas del Form, que es lo que se
 // guarda en la hoja. Se muestra de desacuerdo (izquierda) a acuerdo (derecha).
 var ESCALA = [
-  { valor: "Totalmente en Desacuerdo",       cara: "😟", color: "#e23b32" },
-  { valor: "En Desacuerdo",                  cara: "🙁", color: "#e5601f" },
-  { valor: "Un poco en Desacuerdo",          cara: "😕", color: "#ef8a00" },
-  { valor: "Ni de acuerdo ni en desacuerdo", cara: "😐", color: "#d9a300" },
-  { valor: "Un poco de Acuerdo",             cara: "🙂", color: "#86b51c" },
-  { valor: "De acuerdo",                     cara: "😀", color: "#4fa832" },
-  { valor: "Totalmente de Acuerdo",          cara: "😄", color: "#2f9e4a" }
+  { valor: "Totalmente en Desacuerdo",       cara: "😟", color: "#e23b32", ayuda: "La afirmación no describe para nada lo que usted vive en su trabajo." },
+  { valor: "En Desacuerdo",                  cara: "🙁", color: "#e5601f", ayuda: "La afirmación casi nunca se cumple en su lugar de trabajo." },
+  { valor: "Un poco en Desacuerdo",          cara: "😕", color: "#ef8a00", ayuda: "Se cumple a veces, pero falta más de lo que hay." },
+  { valor: "Ni de acuerdo ni en desacuerdo", cara: "😐", color: "#d9a300", ayuda: "No tiene una opinión clara, o se cumple tantas veces como no." },
+  { valor: "Un poco de Acuerdo",             cara: "🙂", color: "#86b51c", ayuda: "Se cumple la mayoría de las veces, aunque hay cosas por mejorar." },
+  { valor: "De acuerdo",                     cara: "😀", color: "#4fa832", ayuda: "Se cumple casi siempre en su trabajo." },
+  { valor: "Totalmente de Acuerdo",          cara: "😄", color: "#2f9e4a", ayuda: "La afirmación describe exactamente lo que usted vive en su trabajo." }
 ];
 
+// Lo que sube de la carita al elegirla en una pregunta. No interrumpe.
+var REACCIONES = ["¡Anotado!", "¡Gracias!", "¡Listo!", "¡Bien!", "¡Recibido!"];
+
 var MAX_COMENTARIO = 1000;
+
+// Mensajes de motivación. La clave es la sección que se acaba de terminar.
+var MOTIVACION = {
+  3: { emoji: "💚", titulo: "Su opinión es <em>importante</em> para nosotros",
+       texto: "Gracias por responder con sinceridad. Cada respuesta cuenta." },
+  6: { emoji: "🌱", titulo: "Buscamos <em>mejorar</em> nuestra cultura",
+       texto: "Con lo que usted nos cuenta sabemos qué fortalecer y qué cambiar. ¡Ya casi termina!" }
+};
 
 /* ====================== PREGUNTAS ======================
    "col" es el encabezado exacto de la columna en la hoja
@@ -631,8 +699,8 @@ function pintarInicio() {
   $("pilares").innerHTML = SECCIONES.slice(1).map(function (s, i) {
     return '<div class="pill" style="--c:' + s.color + ";animation-delay:" + (i * 60) + 'ms"><span>' + s.icono + "</span>" + esc(s.titulo) + "</div>";
   }).join("");
-  $("escalaDemo").innerHTML = ESCALA.map(function (e) {
-    return "<div><b>" + e.cara + "</b>" + esc(e.valor) + "</div>";
+  $("escalaDemo").innerHTML = ESCALA.map(function (e, i) {
+    return '<button type="button" data-cara="' + i + '" style="--c:' + e.color + '" aria-label="Qué significa ' + esc(e.valor) + '"><b>' + e.cara + "</b>" + esc(e.valor) + "</button>";
   }).join("");
   $("tiposReporte").innerHTML = TIPOS_REPORTE.map(function (t, i) {
     return '<input type="radio" name="tipoReporte" id="tr' + i + '" value="' + esc(t) + '"><label class="chip" for="tr' + i + '">' + esc(t) + "</label>";
@@ -689,7 +757,10 @@ function alCambiar(ev) {
   var el = ev.target, id = el.name, p = preguntaPorId(id);
   if (!p) return;
   var t = tipoDe(p), caja = $(id);
-  if (t === "likert") respuestas[p.col] = ESCALA[+el.value].valor;
+  if (t === "likert") {
+    respuestas[p.col] = ESCALA[+el.value].valor;
+    if (ev.type === "change") reaccionar(el.nextElementSibling, ESCALA[+el.value].color);
+  }
   else respuestas[p.col] = el.value;
   if (t === "texto") {
     caja.querySelector(".cnt span").textContent = el.value.length;
@@ -781,7 +852,9 @@ function siguiente() {
       toast(f.length === 1 ? "Falta 1 pregunta por responder" : "Faltan " + f.length + " preguntas por responder");
       return;
     }
+    var terminada = paso;
     ir(paso + 1);
+    if (MOTIVACION[terminada] && !celebradas["m" + terminada]) { celebradas["m" + terminada] = true; mostrarMotivacion(terminada); }
   } else if (paso === N + 1) {
     enviar();
   }
@@ -793,6 +866,62 @@ function pintarResumen() {
     return '<button class="rrow" data-ir="' + (i + 1) + '" style="animation-delay:' + (i * 50) + 'ms"><span class="e">' + s.icono + '</span><span class="t">' + esc(s.titulo) + "</span>" +
       '<span class="s' + (f ? " no" : "") + '">' + (f ? "Faltan " + f : "Completa ✓") + "</span></button>";
   }).join("");
+}
+
+/* ---------- Significado de cada carita (instrucciones) ---------- */
+
+function explicarCara(i) {
+  var e = ESCALA[i], btn = $("escalaDemo").children[i], caja = $("burbuja");
+  var abierta = btn.classList.contains("on");
+  Array.prototype.forEach.call($("escalaDemo").children, function (b) { b.classList.remove("on"); });
+  if (abierta) { caja.innerHTML = ""; return; }
+  btn.classList.add("on");
+  $("tocaCara").hidden = true;
+  var r = btn.getBoundingClientRect(), rc = $("escalaDemo").getBoundingClientRect();
+  caja.innerHTML = '<div class="burbuja" style="--c:' + e.color + ";--flecha:" + Math.round(r.left - rc.left + r.width / 2) + 'px"><span class="bc">' + e.cara + "</span>" +
+    "<span><b>" + esc(e.valor) + "</b>" + esc(e.ayuda) + "<small>Todas las opciones son válidas: lo importante es responder con sinceridad.</small></span></div>";
+}
+
+// En las preguntas, la carita elegida suelta un aviso corto que sube y se va.
+function reaccionar(label, color) {
+  var viejo = label.querySelector(".reaccion");
+  if (viejo) viejo.remove();
+  if (MENOS_MOVIMIENTO) return;
+  var r = document.createElement("span");
+  r.className = "reaccion";
+  r.style.setProperty("--c", color);
+  r.textContent = REACCIONES[Math.floor(Math.random() * REACCIONES.length)];
+  label.appendChild(r);
+  setTimeout(function () { r.remove(); }, 1000);
+}
+
+/* ---------- Motivación ---------- */
+
+function mostrarMotivacion(seccion) {
+  var m = MOTIVACION[seccion], anillo = $("motiAnillo"), largo = 326.7;
+  $("motiEmoji").textContent = m.emoji;
+  $("motiTitulo").innerHTML = m.titulo;   // texto fijo de esta página
+  $("motiTexto").textContent = m.texto;
+  $("motiAvance").textContent = seccion + " de " + N + " secciones · faltan " + (N - seccion);
+  anillo.style.transition = "none";
+  anillo.style.strokeDashoffset = largo * (1 - (seccion - 3) / N);
+  void anillo.getBoundingClientRect();
+  anillo.style.transition = "";
+  $("toast").classList.remove("on");
+  $("moti").inert = false;
+  $("moti").classList.add("on");
+  requestAnimationFrame(function () { anillo.style.strokeDashoffset = largo * (1 - seccion / N); });
+  setTimeout(function () { $("btnMoti").focus(); }, 80);
+  confeti(.35);
+  clearTimeout(mostrarMotivacion._t);
+  mostrarMotivacion._t = setTimeout(cerrarMotivacion, 6000);
+}
+
+function cerrarMotivacion() {
+  clearTimeout(mostrarMotivacion._t);
+  if (!$("moti").classList.contains("on")) return;
+  $("moti").classList.remove("on");
+  $("moti").inert = true;
 }
 
 /* ---------- Envío al servidor ---------- */
@@ -854,12 +983,13 @@ function reiniciar() {
   ir(0, true);
 }
 
-function confeti() {
+function confeti(cuanto) {
   if (MENOS_MOVIMIENTO) return;
+  var cant = Math.round(110 * (cuanto || 1));
   var colores = ["#97d13b", "#1bb4e4", "#1877c4", "#f5b700", "#e6007e", "#3fb559", "#ef7d00"];
   var caja = document.createElement("div"), html = "";
   caja.className = "confeti";
-  for (var i = 0; i < 110; i++) {
+  for (var i = 0; i < cant; i++) {
     var ang = Math.random() * Math.PI * 2, dist = 120 + Math.random() * Math.min(innerWidth, 700) * .6;
     html += '<i style="--x0:50%;--y0:34%;--c:' + colores[i % colores.length] +
       ";--x:" + Math.round(Math.cos(ang) * dist) + "px;--y:" + Math.round(Math.sin(ang) * dist * .7 + 260 + Math.random() * 200) + "px" +
@@ -971,6 +1101,7 @@ function iniciar() {
   $("secciones").addEventListener("change", alCambiar);
   $("secciones").addEventListener("input", function (ev) { if (ev.target.tagName === "TEXTAREA") alCambiar(ev); });
   $("btnComenzar").addEventListener("click", function () { ir(1); });
+  $("escalaDemo").addEventListener("click", function (ev) { var b = ev.target.closest("[data-cara]"); if (b) explicarCara(+b.dataset.cara); });
   $("btnSig").addEventListener("click", siguiente);
   $("btnAtras").addEventListener("click", function () { if (paso > 0 && !enviando) ir(paso - 1, true); });
   $("resumen").addEventListener("click", function (ev) { var b = ev.target.closest("[data-ir]"); if (b) ir(+b.dataset.ir, true); });
@@ -992,7 +1123,13 @@ function iniciar() {
   $("formReporte").addEventListener("submit", enviarReporte);
   $("formReporte").addEventListener("change", function () { $("repEstado").textContent = ""; });
   $("repOk").addEventListener("click", function (ev) { if (ev.target.id === "btnVolverEncuesta") { cerrarPanel(); limpiarReporte(); } });
-  document.addEventListener("keydown", function (ev) { if (ev.key === "Escape" && $("panel").classList.contains("on")) cerrarPanel(); });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key !== "Escape") return;
+    if ($("moti").classList.contains("on")) cerrarMotivacion();
+    else if ($("panel").classList.contains("on")) cerrarPanel();
+  });
+  $("btnMoti").addEventListener("click", cerrarMotivacion);
+  $("moti").addEventListener("click", function (ev) { if (ev.target === $("moti")) cerrarMotivacion(); });
   // Versiones anteriores guardaban el avance en el navegador; se limpia.
   try { localStorage.removeItem("encuesta-cultura-hse-2026"); localStorage.removeItem("encuesta-cultura-hse-2026-v2"); } catch (e) {}
   actualizarNav();

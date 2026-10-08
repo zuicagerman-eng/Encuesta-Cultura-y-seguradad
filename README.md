@@ -18,6 +18,20 @@ funcionando.
     `Reportes de problemas` (tipo, descripción, pantalla, contacto opcional, navegador, tamaño de
     pantalla, tema y último error), con la columna `Estado` en "Nuevo" para hacerle seguimiento.
     No incluye las respuestas de la encuesta.
+  - **Motivación**: al terminar las secciones 3 y 6 sale un mensaje ("Su opinión es importante
+    para nosotros", "Buscamos mejorar nuestra cultura") con el avance. Los textos están en
+    `MOTIVACION`, dentro del bloque `CONFIGURACIÓN`.
+  - **Caritas**: en las instrucciones, tocar una carita muestra qué significa esa opción
+    (`ayuda` de cada opción en `ESCALA`). En las preguntas, la carita elegida suelta un aviso
+    corto ("¡Anotado!") que no interrumpe.
+- `difusion/` — material para invitar a responder. Todos los QR llevan a
+  `https://zuicagerman-eng.github.io/Encuesta-Cultura-y-seguradad/` y se probaron con un lector.
+  - `qr-encuesta.png` y `qr-encuesta.svg` — el QR solo, con el logo (el SVG sirve para imprimir
+    en cualquier tamaño).
+  - `qr-celular.png` — vertical 1080×1920, para WhatsApp o para mostrarlo en la pantalla.
+  - `afiche-encuesta.png` — afiche A4 para imprimir y pegar en planta.
+  - `bienvenida-encuesta.gif` y `bienvenida-encuesta.mp4` — animación de 12 s que termina en el
+    QR. Por WhatsApp el MP4 se ve más nítido.
 - `apps-script/Codigo.gs` — recibe la respuesta y la escribe en la hoja. Ubica cada columna por
   el texto del encabezado, no por posición. Si una pregunta no coincide con ninguna columna,
   rechaza el envío con un mensaje claro en vez de perder la respuesta.
