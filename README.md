@@ -36,23 +36,23 @@ funcionando.
     en cualquier tamaño).
   - `qr-celular.png` — vertical 1080×1920, para WhatsApp o para mostrarlo en la pantalla.
   - `afiche-encuesta.png` — afiche A4 para imprimir y pegar en planta.
-  - `bienvenida-encuesta.gif` y `bienvenida-encuesta.mp4` — animación de 12 s que termina en el
-    QR. Por WhatsApp el MP4 se ve más nítido.
+  - `bienvenida-encuesta.gif`, `.mp4` y `.webm` — animación de 12 s que termina en el QR. Por
+    WhatsApp el MP4 se ve más nítido. La encuesta la muestra al abrir, solo en computador.
+- **Computador primero**: en pantallas grandes con mouse la bienvenida arranca sola y el QR se
+  ve en la portada y al final, para que otros lo escaneen. En el celular no se muestra el QR
+  (ya está en el celular), compartir ofrece WhatsApp y copiar enlace, y la bienvenida queda en
+  el botón "Ver bienvenida" para no gastar datos.
 - `apps-script/Codigo.gs` — recibe la respuesta y la escribe en la hoja. Ubica cada columna por
   el texto del encabezado, no por posición. Si una pregunta no coincide con ninguna columna,
   rechaza el envío con un mensaje claro en vez de perder la respuesta.
 - `apps-script/appsscript.json` — la aplicación web corre como quien la publica y la puede abrir
   cualquiera, sin iniciar sesión (necesario para contratistas y para que sea anónima).
 
-## Antes de publicar: revisar las opciones
+## Opciones de respuesta
 
-El Excel exportado trae las preguntas pero no las opciones de respuesta. En `index.html`, bloque
-`CONFIGURACIÓN`, ajuste para que queden **idénticas** a las del Form:
-
-- `OPCIONES` — plantas, tipo de vinculación, cargo, rango de edad, antigüedad y la pregunta de
-  desviaciones.
-- `ESCALA` — ya tiene las 7 opciones del Form ("Totalmente de Acuerdo" … "Totalmente en
-  Desacuerdo"), con el mismo texto que se guarda en la hoja.
+En `index.html`, bloque `CONFIGURACIÓN`: `OPCIONES` (planta, vinculación, cargo, edad, antigüedad
+y desviaciones) y `ESCALA` (las 7 opciones de acuerdo) tienen el texto exacto del Google Form, que
+es lo que se guarda en la hoja. Si el Form cambia, cámbielas aquí letra por letra.
 
 ## Puesta en marcha
 
