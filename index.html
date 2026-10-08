@@ -533,6 +533,7 @@ function enviar() {
     borrarBorrador();
     $("fin").innerHTML = '<div class="ok">✓</div><h2>¡Gracias por participar!</h2>' +
       "<p>Sus respuestas quedaron registradas de forma anónima. Su opinión nos ayuda a construir una cultura de Salud, Seguridad y Ambiente más fuerte en Holcim Colombia.</p>" +
+      (r && r.prueba ? '<div class="errbox" style="border-left-color:var(--gold)"><b>Vista previa:</b> esta respuesta no se guardó porque la encuesta todavía no está conectada a Google Sheets (falta <code>URL_WEBAPP</code>).</div>' : "") +
       '<button class="big alt" id="btnOtra">Enviar otra respuesta</button>';
   };
   var fallo = function (msg) {
@@ -546,7 +547,8 @@ function enviar() {
   if (window.google && google.script && google.script.run) {
     google.script.run.withSuccessHandler(ok).withFailureHandler(function (e) { fallo(e && e.message); }).registrarRespuesta(datos);
   } else if (!URL_WEBAPP) {
-    fallo("Falta configurar URL_WEBAPP en el archivo index.html (ver README).");
+    // Vista previa: todavía no hay Apps Script conectado, así que no se guarda nada.
+    setTimeout(function () { ok({ ok: true, prueba: true }); }, 900);
   } else {
     // text/plain evita la consulta previa de CORS que Apps Script no responde.
     fetch(URL_WEBAPP, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(datos) })
@@ -593,7 +595,7 @@ function restaurar(b) {
   if (p > 0) toast("Retomamos donde iba");
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+function iniciar() {
   pintarInicio();
   pintarSecciones();
   $("secciones").addEventListener("change", alCambiar);
@@ -609,7 +611,9 @@ document.addEventListener("DOMContentLoaded", function () {
   var b = leerBorrador();
   if (b && b.r && Object.keys(b.r).length) restaurar(b);
   actualizarNav();
-});
+}
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+else iniciar();
 </script>
 </body>
 </html>
