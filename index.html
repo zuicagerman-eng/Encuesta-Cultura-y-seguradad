@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Percepción de Cultura HSE 2026 · Holcim Colombia</title>
+<style>
+  :root{
+    --navy:#071a38;--panel:#0e2c56;--light:#eef3f9;--white:#fff;--ink:#0b2545;--muted:#5b6b82;
+    --line:#d7e0ec;--green:#97d13b;--cyan:#1bb4e4;--blue:#1877c4;--danger:#e23b32;--ok:#3fb559;
+    --orange:#ef7d00;--gold:#f5b700;--teal:#17868a;--magenta:#e6007e;
+    --acc:var(--cyan);
+    --font:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font);color:var(--ink);background:var(--navy);min-height:100vh;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(circle at 15% 0%,rgba(27,180,228,.18),transparent 45%),radial-gradient(circle at 90% 30%,rgba(151,209,59,.12),transparent 40%)}
+  button{font-family:var(--font)}
+
+  /* ---------- Cabecera ---------- */
+  header{position:sticky;top:0;z-index:20;background:rgba(7,26,56,.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08)}
+  .hbar{max-width:920px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:10px 16px}
+  .logo{background:#fff;border-radius:10px;padding:6px 10px;display:flex;align-items:center;flex:none}
+  .logo img{height:22px;display:block}
+  .htit{color:#fff;min-width:0;flex:1}
+  .htit b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .htit span{font-size:12px;color:#9fb3cf}
+  .hstep{color:#fff;font-size:12.5px;font-weight:700;background:rgba(255,255,255,.1);border-radius:999px;padding:6px 12px;white-space:nowrap}
+  .progress{height:4px;background:rgba(255,255,255,.08)}
+  .progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--green));transition:width .5s ease}
+
+  /* ---------- Pantallas ---------- */
+  main{max-width:920px;margin:0 auto;padding:22px 16px 120px}
+  .screen{display:none}
+  .screen.on{display:block;animation:entra .45s ease both}
+  .screen.on.atras{animation-name:entraAtras}
+  @keyframes entra{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+  @keyframes entraAtras{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+  @keyframes sube{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+  /* Bienvenida */
+  .hero{color:#fff;padding:26px 4px 18px}
+  .eyebrow{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:12px}
+  .hero h1{font-size:clamp(28px,5.6vw,46px);line-height:1.08;font-weight:800;letter-spacing:-.01em}
+  .hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--cyan),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p.lead{margin-top:14px;font-size:16.5px;line-height:1.55;color:#c9d6e8;max-width:720px}
+  .pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:22px 0 6px}
+  .pill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 14px;color:#fff;display:flex;gap:10px;align-items:center;font-size:13.5px;font-weight:600;
+    animation:sube .5s ease both}
+  .pill span{font-size:22px}
+  .card{background:#fff;border-radius:18px;box-shadow:0 18px 40px rgba(0,0,0,.25);padding:24px 22px;margin-top:16px}
+  .card h3{font-size:16px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+  .card ul{list-style:none;display:grid;gap:10px}
+  .card li{display:flex;gap:10px;font-size:15px;line-height:1.5;color:#33465f}
+  .card li::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--green);margin-top:8px}
+  .anon{display:flex;gap:12px;align-items:flex-start;background:#eaf7d6;border-radius:14px;padding:14px 16px;margin-top:16px;color:#2f4a10;font-size:14.5px;line-height:1.5}
+  .anon b{display:block;color:#24400a}
+  .anon span.ic{font-size:22px}
+  .escala-demo{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:14px}
+  .escala-demo div{text-align:center;font-size:11.5px;color:var(--muted);line-height:1.25}
+  .escala-demo div b{display:block;font-size:22px;margin-bottom:4px}
+
+  /* Encabezado de sección */
+  .shead{display:flex;gap:16px;align-items:center;color:#fff;padding:12px 2px 6px}
+  .sicon{flex:none;width:64px;height:64px;border-radius:18px;display:grid;place-items:center;font-size:32px;background:var(--acc);box-shadow:0 10px 24px rgba(0,0,0,.25)}
+  .shead small{display:block;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);filter:brightness(1.35)}
+  .shead h2{font-size:clamp(21px,4.2vw,30px);line-height:1.15;margin-top:2px}
+  .shead p{font-size:14px;color:#9fb3cf;margin-top:4px}
+
+  /* Preguntas */
+  .q{background:#fff;border-radius:18px;padding:20px 20px 18px;margin-top:14px;box-shadow:0 12px 30px rgba(0,0,0,.2);border:2px solid transparent;transition:border-color .25s,box-shadow .25s;animation:sube .45s ease both;scroll-margin-top:90px}
+  .q.falta{border-color:var(--danger);box-shadow:0 0 0 4px rgba(226,59,50,.18)}
+  .q.lista .qn{background:var(--ok);color:#fff}
+  .qtop{display:flex;gap:12px;align-items:flex-start}
+  .qn{flex:none;width:30px;height:30px;border-radius:50%;background:var(--light);color:var(--ink);display:grid;place-items:center;font-weight:800;font-size:13px;transition:.25s}
+  .qt{font-size:16px;line-height:1.45;font-weight:600;padding-top:3px}
+  .qt .req{color:var(--danger);margin-left:3px}
+  .qerr{display:none;color:var(--danger);font-size:13px;font-weight:600;margin:10px 0 0 42px}
+  .q.falta .qerr{display:block}
+
+  /* Escala Likert */
+  .likert{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:16px}
+  .likert input,.chips input{position:absolute;opacity:0;pointer-events:none}
+  .lk{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;cursor:pointer;border:2px solid var(--line);border-radius:14px;padding:12px 4px 10px;
+    font-size:12px;line-height:1.2;color:var(--muted);font-weight:600;transition:transform .15s,border-color .2s,background .2s,color .2s;user-select:none;-webkit-tap-highlight-color:transparent}
+  .lk .face{font-size:28px;line-height:1;filter:grayscale(1) opacity(.55);transition:filter .2s,transform .2s}
+  .lk .num{font-size:11px;font-weight:800;color:#9aa8bb}
+  .lk:hover{border-color:var(--c);transform:translateY(-2px)}
+  .lk:hover .face{filter:none}
+  input:checked + .lk{border-color:var(--c);background:var(--c);color:#fff;transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.15)}
+  input:checked + .lk .face{filter:none;transform:scale(1.15)}
+  input:checked + .lk .num{color:rgba(255,255,255,.85)}
+  input:focus-visible + .lk,input:focus-visible + .chip{outline:3px solid var(--cyan);outline-offset:2px}
+
+  /* Opciones (datos generales) */
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .chip{display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:2px solid var(--line);border-radius:999px;padding:9px 16px;font-size:14.5px;font-weight:600;color:#33465f;transition:.18s;user-select:none;-webkit-tap-highlight-color:transparent}
+  .chip:hover{border-color:var(--blue)}
+  .chip::before{content:"";width:14px;height:14px;border-radius:50%;border:2px solid #b6c3d4;flex:none;transition:.18s}
+  input:checked + .chip{border-color:var(--blue);background:#e8f3fc;color:var(--ink)}
+  input:checked + .chip::before{border-color:var(--blue);background:var(--blue);box-shadow:inset 0 0 0 3px #fff}
+  select.sel{margin-top:14px;width:100%;font-family:var(--font);font-size:15.5px;padding:12px 14px;border-radius:12px;border:2px solid var(--line);background:#fff;color:var(--ink);appearance:none;
+    background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px;background-repeat:no-repeat}
+  select.sel:focus,textarea:focus{outline:none;border-color:var(--cyan)}
+
+  /* Comentarios */
+  .q.coment{background:#f6f9fd;box-shadow:none;border:2px dashed var(--line)}
+  textarea{margin-top:12px;width:100%;min-height:96px;resize:vertical;font-family:var(--font);font-size:15px;line-height:1.5;padding:12px 14px;border-radius:12px;border:2px solid var(--line);color:var(--ink);background:#fff}
+  .cnt{text-align:right;font-size:12px;color:var(--muted);margin-top:4px}
+  .opc{font-size:12px;font-weight:700;color:var(--muted);background:var(--light);border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+
+  /* Barra de navegación */
+  .nav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(7,26,56,.95);backdrop-filter:blur(8px);border-top:1px solid rgba(255,255,255,.08)}
+  .navin{max-width:920px;margin:0 auto;display:flex;gap:10px;align-items:center;padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+  .nbtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:12px;padding:13px 22px;font-weight:700;font-size:15px;cursor:pointer;transition:.2s}
+  .nbtn.sec{background:rgba(255,255,255,.1);color:#fff}
+  .nbtn.sec:hover{background:rgba(255,255,255,.18)}
+  .nbtn.pri{background:var(--green);color:var(--navy);margin-left:auto;min-width:150px}
+  .nbtn.pri:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .nbtn:disabled{opacity:.5;cursor:default;transform:none}
+  .navinfo{color:#9fb3cf;font-size:13px}
+  .navinfo b{color:#fff}
+
+  .big{display:inline-flex;align-items:center;gap:10px;background:var(--green);color:var(--navy);border:none;border-radius:999px;padding:16px 38px;font-weight:800;font-size:17px;cursor:pointer;margin-top:24px;transition:.2s;box-shadow:0 10px 30px rgba(151,209,59,.3)}
+  .big:hover{transform:translateY(-2px);filter:brightness(1.06)}
+  .big.alt{background:#fff;color:var(--ink);box-shadow:none}
+
+  /* Final */
+  .fin{color:#fff;text-align:center;padding:40px 8px}
+  .fin .ok{width:96px;height:96px;border-radius:50%;background:var(--green);display:grid;place-items:center;margin:0 auto 22px;font-size:46px;animation:pop .6s cubic-bezier(.2,1.6,.4,1) both}
+  @keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+  .fin h2{font-size:clamp(26px,5vw,38px)}
+  .fin p{color:#c9d6e8;font-size:16px;line-height:1.55;max-width:560px;margin:12px auto 0}
+  .spinner{width:46px;height:46px;border:4px solid rgba(255,255,255,.15);border-top-color:var(--green);border-radius:50%;margin:0 auto 22px;animation:gira 1s linear infinite}
+  @keyframes gira{to{transform:rotate(360deg)}}
+  .errbox{background:#fff;color:var(--ink);border-radius:16px;padding:18px;margin:20px auto 0;max-width:560px;text-align:left;font-size:14px;line-height:1.5;border-left:5px solid var(--danger)}
+
+  /* Resumen antes de enviar */
+  .resumen{display:grid;gap:8px;margin-top:16px}
+  .rrow{display:flex;align-items:center;gap:12px;background:#fff;border-radius:14px;padding:12px 16px;cursor:pointer;border:none;text-align:left;font-size:14.5px;color:var(--ink);transition:.18s}
+  .rrow:hover{transform:translateX(3px)}
+  .rrow .e{font-size:22px}
+  .rrow .t{flex:1;font-weight:600}
+  .rrow .s{font-size:12.5px;font-weight:700;border-radius:999px;padding:4px 10px;background:#eaf7d6;color:#2f6a12;white-space:nowrap}
+  .rrow .s.no{background:#fde7e5;color:#a12a22}
+
+  #toast{position:fixed;left:50%;bottom:92px;transform:translate(-50%,20px);opacity:0;background:#fff;color:var(--ink);font-weight:600;font-size:14px;padding:12px 18px;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.3);transition:.3s;z-index:40;pointer-events:none;max-width:calc(100% - 32px);text-align:center}
+  #toast.on{opacity:1;transform:translate(-50%,0)}
+
+  @media (max-width:640px){
+    .htit span{display:none}
+    .likert{grid-template-columns:1fr;gap:6px}
+    .lk{flex-direction:row;justify-content:flex-start;gap:12px;padding:10px 14px;font-size:14px;text-align:left}
+    .lk .face{font-size:24px}
+    .lk .num{margin-left:auto}
+    .q{padding:18px 16px 16px}
+    .qerr{margin-left:0}
+    .nbtn{padding:13px 16px}
+    .nbtn.pri{min-width:0;flex:1}
+    .navinfo{display:none}
+    .sicon{width:54px;height:54px;font-size:27px;border-radius:15px}
+  }
+  @media (prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hbar">
+    <div class="logo"><img alt="Holcim" src="data:image/png;base64,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"></div>
+    <div class="htit"><b>Percepción de Cultura de Salud, Seguridad y Ambiente 2026</b><span>Encuesta anónima · Holcim Colombia</span></div>
+    <div class="hstep" id="hstep">Bienvenida</div>
+  </div>
+  <div class="progress"><i id="bar"></i></div>
+</header>
+
+<main id="app">
+  <!-- Bienvenida -->
+  <section class="screen on" id="s-inicio">
+    <div class="hero">
+      <span class="eyebrow">Encuesta HSE 2026</span>
+      <h1>¡Percepción de Cultura de <em>Salud, Seguridad y Ambiente</em> 2026!</h1>
+      <p class="lead">Esta encuesta tiene como objetivo evaluar la Cultura de Salud, Seguridad en el Trabajo y Ambiente en Holcim Colombia. Su participación es la oportunidad para expresar sus opiniones y brindar comentarios sobre la gestión HSE.</p>
+      <div class="pillars" id="pilares"></div>
+    </div>
+
+    <div class="anon"><span class="ic">🔒</span><div><b>Sus respuestas son completamente anónimas.</b>Por favor responda todos los ítems de la manera más honesta y objetiva posible. Sus respuestas no se utilizarán para evaluar su trabajo de ninguna manera.</div></div>
+
+    <div class="card">
+      <h3>📋 Instrucciones</h3>
+      <ul>
+        <li>Responder la encuesta completa deberá tomarle menos de 5 minutos.</li>
+        <li>La encuesta contiene un conjunto de elementos que evalúan la Salud, Seguridad en el Trabajo y Ambiente en Holcim, tal como existe hoy en Holcim Colombia. Sus respuestas sirven para identificar fortalezas y aspectos por mejorar.</li>
+        <li>Si tiene alguna pregunta sobre esta encuesta, póngase en contacto con el personal H&amp;S Holcim de su sitio de trabajo.</li>
+        <li>La encuesta está diseñada con una escala de calificación para que, según su criterio, evalúe qué tan de acuerdo está con cada afirmación:</li>
+      </ul>
+      <div class="escala-demo" id="escalaDemo"></div>
+    </div>
+
+    <div style="text-align:center"><button class="big" id="btnComenzar">Comenzar la encuesta <span>→</span></button></div>
+  </section>
+
+  <!-- Las secciones se generan desde SECCIONES -->
+  <div id="secciones"></div>
+
+  <!-- Resumen -->
+  <section class="screen" id="s-resumen">
+    <div class="shead"><div class="sicon" style="--acc:var(--green)">📨</div><div><small>Último paso</small><h2>Revise y envíe</h2><p>Toque una sección para volver a ella.</p></div></div>
+    <div class="resumen" id="resumen"></div>
+  </section>
+
+  <!-- Enviando / Gracias / Error -->
+  <section class="screen" id="s-fin">
+    <div class="fin" id="fin"></div>
+  </section>
+</main>
+
+<nav class="nav" id="nav" hidden>
+  <div class="navin">
+    <button class="nbtn sec" id="btnAtras">← Atrás</button>
+    <span class="navinfo" id="navinfo"></span>
+    <button class="nbtn pri" id="btnSig">Siguiente →</button>
+  </div>
+</nav>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ====================== CONFIGURACIÓN ====================== */
+
+// URL /exec de la aplicación web de Apps Script (ver README). Solo hace falta
+// cuando esta página se publica fuera de Apps Script (GitHub Pages, intranet).
+// Si la página la sirve el mismo Apps Script, se ignora.
+var URL_WEBAPP = "";
+
+// Las opciones deben ser IGUALES, letra por letra, a las del Google Form, para
+// que las respuestas nuevas queden con el mismo texto que las anteriores.
+var OPCIONES = {
+  planta: [
+    "AGG - Mondoñedo (Mosquera)",
+    "CEM - Nobsa",
+    "GEO - Nobsa",
+    "GEO - Barrancabermeja",
+    "RMX - Bello",
+    "RMX - Boyacá (Nobsa)",
+    "RMX - Tunja",
+    "RMX - Chía",
+    "RMX - Puente Aranda",
+    "RMX - Sibaté",
+    "RMX - Palmira",
+    "RMX - Calisur",
+    "TQC - Tocancipá",
+    "Transcem",
+    "Oficinas Teleport (Bogotá)",
+    "Fundación Holcim",
+    "Otra"
+  ],
+  tipo: ["Empleado directo Holcim", "Contratista", "Aprendiz / Practicante"],
+  cargo: ["Operativo", "Administrativo", "Supervisor / Coordinador / Jefe", "Gerente / Directivo"],
+  edad: ["18 a 25", "26 a 35", "36 a 45", "46 a 55", "Más de 55"],
+  antiguedad: ["Menos de 1 año", "1 a 3 años", "4 a 6 años", "7 a 10 años", "Más de 10 años"],
+  desviacion: ["Sí", "No", "No he reportado desviaciones"]
+};
+
+// Escala de calificación. "valor" es lo que se guarda en la hoja.
+// Si en el Form era una escala lineal 1 a 5, deje los números; si eran
+// opciones de texto, cambie "valor" por el texto exacto de cada opción.
+var ESCALA = [
+  { valor: 1, texto: "Totalmente en desacuerdo", cara: "😟", color: "#e23b32" },
+  { valor: 2, texto: "En desacuerdo",            cara: "🙁", color: "#ef7d00" },
+  { valor: 3, texto: "Ni de acuerdo ni en desacuerdo", cara: "😐", color: "#d9a300" },
+  { valor: 4, texto: "De acuerdo",               cara: "🙂", color: "#6fae1f" },
+  { valor: 5, texto: "Totalmente de acuerdo",    cara: "😄", color: "#2f9e4a" }
+];
+
+var MAX_COMENTARIO = 1000;
+
+/* ====================== PREGUNTAS ======================
+   "col" es el encabezado exacto de la columna en la hoja
+   "Respuestas de formulario 1". El servidor ubica cada respuesta por ese texto. */
+
+var SECCIONES = [
+  { titulo: "Datos generales", icono: "🏭", color: "#1bb4e4", texto: "Nos ayudan a analizar los resultados por grupo. No le pedimos su nombre.",
+    preguntas: [
+      { col: "¿En cuál planta o sede de trabajo está ubicado(a)?", tipo: "lista", op: "planta" },
+      { col: "Usted es:", tipo: "opcion", op: "tipo" },
+      { col: "Qué tipo de cargo desempeña en sus labores", tipo: "opcion", op: "cargo" },
+      { col: "Cúal es su rango de Edad en años", tipo: "opcion", op: "edad" },
+      { col: "Número de años que lleva trabajando en Holcim Colombia", tipo: "opcion", op: "antiguedad" },
+      { col: "Ha reportado alguna desviación en Salud, Seguridad o Ambiente sin que esta haya sido tenido en cuenta", tipo: "opcion", op: "desviacion" }
+    ] },
+  { titulo: "Valores y compromiso HSE", icono: "🤝", color: "#97d13b",
+    preguntas: [
+      { col: "Mi supervisor/gerente apoya los más altos estándares posibles de salud, seguridad y ambiente (HSE)." },
+      { col: "La salud, seguridad y ambiente (HSE) son una prioridad en mi trabajo." },
+      { col: "La gerencia se preocupa por la salud, seguridad y ambiente (HSE), incluso si no hay incidentes ni accidentes." },
+      { col: "La gerencia y los supervisores son modelos a seguir para los comportamientos esperados en materia de salud, seguridad y ambiente (HSE)." },
+      { col: "Por favor comparta aquí sus comentarios sobre VALORES Y COMPROMISO HSE:", tipo: "texto" }
+    ] },
+  { titulo: "Procesos operacionales", icono: "⚙️", color: "#1877c4",
+    preguntas: [
+      { col: "Nuestra comunicación en temas de salud, seguridad y ambiente (HSE) es efectiva en todos los niveles de la empresa (De arriba hacia abajo, de abajo hacia arriba y de igual a igual)." },
+      { col: "La alta gerencia es consciente de los problemas que enfrentan los trabajadores en el campo y actúa para resolverlos." },
+      { col: "Las tareas se evalúan periódicamente para identificar y gestionar los riesgos en mi lugar de trabajo." },
+      { col: "Se motiva e invita a los empleados a involucrarse en la mejora de los procesos de trabajo en función de los riesgos identificados." },
+      { col: "Por favor comparta aquí sus comentarios sobre PROCESOS OPERACIONALES:", tipo: "texto" }
+    ] },
+  { titulo: "Gestión de recursos", icono: "🧰", color: "#17868a",
+    preguntas: [
+      { col: "En Holcim Colombia se está invirtiendo activamente recursos para mejorar la salud, seguridad y ambiente." },
+      { col: "Holcim Colombia contrata trabajadores alineados con los valores de HSE y brinda oportunidades de capacitación y aprendizaje." },
+      { col: "Holcim Colombia asegura que las herramientas y los equipos sean eficientes, apropiados y seguros de usar." },
+      { col: "Holcim Colombia valora el tiempo invertido en mejorar la salud, la seguridad y el medio ambiente." },
+      { col: "Por favor comparta aquí sus comentarios sobre GESTIÓN DE RECURSOS:", tipo: "texto" }
+    ] },
+  { titulo: "Supervisión", icono: "👷", color: "#f5b700",
+    preguntas: [
+      { col: "Los supervisores alientan a los trabajadores a reportar e informar cualquier problema o inquietud." },
+      { col: "Los supervisores alientan a los trabajadores a dedicar tiempo para la capacitación y el desarrollo personal." },
+      { col: "Los trabajadores reciben suficiente capacitación e instrucciones para realizar su trabajo de manera segura." },
+      { col: "Los supervisores están presentes en campo y brindan supervisión regular y comentarios constructivos." },
+      { col: "Por favor comparta aquí sus comentarios sobre SUPERVISIÓN:", tipo: "texto" }
+    ] },
+  { titulo: "Planificación del trabajo", icono: "📋", color: "#ef7d00",
+    preguntas: [
+      { col: "Se informa a los trabajadores sobre los peligros potenciales asociados con las actividades laborales." },
+      { col: "Los supervisores tratan de distribuir la carga de trabajo de manera uniforme entre los trabajadores." },
+      { col: "Los supervisores monitorean de cerca la competencia para garantizar que los trabajadores estén calificados para realizar las tareas asignadas." },
+      { col: "Me proporcionan la información, el equipo y el tiempo apropiado para realizar mi trabajo de manera segura." },
+      { col: "Por favor comparta aquí sus comentarios sobre PLANIFICACIÓN DEL TRABAJO:", tipo: "texto" }
+    ] },
+  { titulo: "Abordaje de problemas y peligros", icono: "⚠️", color: "#e23b32",
+    preguntas: [
+      { col: "Los supervisores constantemente hacen responsables a los trabajadores que actúan de manera insegura, incluso si sus acciones ahorraron tiempo o dinero." },
+      { col: "Cuando los trabajadores reportan un problema de salud, seguridad y medio ambiente, los supervisores actúan rápidamente para corregir el problema." },
+      { col: "Los supervisores no son permisivos con los trabajadores que violan los procedimientos y reglas de salud, seguridad y medio ambiente." },
+      { col: "Cuando es necesario, las consecuencias disciplinarias se aplican a los empleados en cualquier nivel de la organización." },
+      { col: "Por favor comparta aquí sus comentarios sobre ABORDAJE DE PROBLEMAS Y PELIGROS:", tipo: "texto" }
+    ] },
+  { titulo: "Cumplimiento de reglas", icono: "✅", color: "#3fb559",
+    preguntas: [
+      { col: "Los supervisores animan a los trabajadores a detener los trabajos que no sean seguros." },
+      { col: "Los supervisores dan ejemplo en el cumplimiento de Reglas y estándares de salud, seguridad y medio ambiente." },
+      { col: "Los supervisores nunca firman evaluaciones de Riesgos (Permisos de trabajo, ATS o ITS) que están incompletos o inexactos." },
+      { col: "Los supervisores siempre siguen las reglas de salud, seguridad y ambiente (HSE)." },
+      { col: "Por favor comparta aquí sus comentarios sobre CUMPLIMIENTO DE REGLAS:", tipo: "texto" }
+    ] },
+  { titulo: "Evaluación subjetiva de riesgos", icono: "🎯", color: "#e6007e",
+    preguntas: [
+      { col: "Es poco probable que me lesione en el trabajo durante los próximos 12 meses." },
+      { col: "Es poco probable que uno de mis compañeros de trabajo o contratistas se lesionen en el trabajo en los próximos 12 meses." },
+      { col: "Es poco probable que ocurra un incidente o accidente en los próximos 12 meses." },
+      { col: "Por favor comparta aquí sus comentarios sobre EVALUACIÓN SUBJETIVA DE RIESGOS:", tipo: "texto" }
+    ] }
+];
+
+/* ====================== LÓGICA ====================== */
+
+var CLAVE_BORRADOR = "encuesta-cultura-hse-2026";
+var respuestas = {};
+var paso = 0;              // 0 = bienvenida, 1..N = secciones, N+1 = resumen, N+2 = fin
+var N = SECCIONES.length;
+var enviando = false;
+
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function tipoDe(p) { return p.tipo || "likert"; }
+function obligatoria(p) { return tipoDe(p) !== "texto"; }
+
+function toast(msg) {
+  var t = $("toast"); t.textContent = msg; t.classList.add("on");
+  clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove("on"); }, 2600);
+}
+
+function guardarBorrador() {
+  try { localStorage.setItem(CLAVE_BORRADOR, JSON.stringify({ r: respuestas, p: paso })); } catch (e) {}
+}
+function leerBorrador() {
+  try { return JSON.parse(localStorage.getItem(CLAVE_BORRADOR) || "null"); } catch (e) { return null; }
+}
+function borrarBorrador() {
+  try { localStorage.removeItem(CLAVE_BORRADOR); } catch (e) {}
+}
+
+function pintarInicio() {
+  $("pilares").innerHTML = SECCIONES.slice(1).map(function (s, i) {
+    return '<div class="pill" style="animation-delay:' + (i * 60) + 'ms"><span>' + s.icono + "</span>" + esc(s.titulo) + "</div>";
+  }).join("");
+  $("escalaDemo").innerHTML = ESCALA.map(function (e) {
+    return "<div><b>" + e.cara + "</b>" + esc(e.texto) + "</div>";
+  }).join("");
+}
+
+function pintarSecciones() {
+  var html = "", nq = 0;
+  SECCIONES.forEach(function (s, si) {
+    html += '<section class="screen" id="s-' + (si + 1) + '" style="--acc:' + s.color + '">' +
+      '<div class="shead"><div class="sicon">' + s.icono + '</div><div><small>Sección ' + (si + 1) + " de " + N + "</small><h2>" + esc(s.titulo) + "</h2>" +
+      (s.texto ? "<p>" + esc(s.texto) + "</p>" : "<p>¿Qué tan de acuerdo está con cada afirmación?</p>") + "</div></div>";
+    s.preguntas.forEach(function (p, pi) {
+      var id = "q" + si + "_" + pi, t = tipoDe(p);
+      p._id = id;
+      if (t !== "texto") nq++;
+      html += '<div class="q' + (t === "texto" ? " coment" : "") + '" id="' + id + '" style="animation-delay:' + (pi * 70) + 'ms">' +
+        '<div class="qtop"><div class="qn">' + (t === "texto" ? "💬" : nq) + '</div><div class="qt">' + esc(p.col) +
+        (t === "texto" ? '<span class="opc">Opcional</span>' : '<span class="req">*</span>') + "</div></div>";
+      if (t === "likert") {
+        html += '<div class="likert" role="radiogroup" aria-label="' + esc(p.col) + '">' + ESCALA.map(function (e, ei) {
+          return '<input type="radio" name="' + id + '" id="' + id + "_" + ei + '" value="' + ei + '">' +
+            '<label class="lk" for="' + id + "_" + ei + '" style="--c:' + e.color + '"><span class="face">' + e.cara + "</span>" + esc(e.texto) + '<span class="num">' + e.valor + "</span></label>";
+        }).join("") + "</div>";
+      } else if (t === "opcion") {
+        html += '<div class="chips" role="radiogroup">' + OPCIONES[p.op].map(function (o, oi) {
+          return '<input type="radio" name="' + id + '" id="' + id + "_" + oi + '" value="' + esc(o) + '"><label class="chip" for="' + id + "_" + oi + '">' + esc(o) + "</label>";
+        }).join("") + "</div>";
+      } else if (t === "lista") {
+        html += '<select class="sel" name="' + id + '"><option value="">Seleccione…</option>' + OPCIONES[p.op].map(function (o) {
+          return '<option value="' + esc(o) + '">' + esc(o) + "</option>";
+        }).join("") + "</select>";
+      } else {
+        html += '<textarea name="' + id + '" maxlength="' + MAX_COMENTARIO + '" placeholder="Escriba aquí sus comentarios (opcional)"></textarea><div class="cnt"><span>0</span> / ' + MAX_COMENTARIO + "</div>";
+      }
+      html += '<div class="qerr">Esta pregunta es obligatoria.</div></div>';
+    });
+    html += "</section>";
+  });
+  $("secciones").innerHTML = html;
+}
+
+function preguntaPorId(id) {
+  var m = /^q(\d+)_(\d+)$/.exec(id);
+  return m ? SECCIONES[+m[1]].preguntas[+m[2]] : null;
+}
+
+function alCambiar(ev) {
+  var el = ev.target, id = el.name, p = preguntaPorId(id);
+  if (!p) return;
+  var t = tipoDe(p), caja = $(id);
+  if (t === "likert") respuestas[p.col] = ESCALA[+el.value].valor;
+  else respuestas[p.col] = el.value;
+  if (t === "texto") {
+    caja.querySelector(".cnt span").textContent = el.value.length;
+    if (!el.value.trim()) delete respuestas[p.col];
+  }
+  var ok = respuestas[p.col] !== undefined && respuestas[p.col] !== "";
+  caja.classList.toggle("lista", ok && t !== "texto");
+  if (ok) caja.classList.remove("falta");
+  if (!ok && t !== "texto") delete respuestas[p.col];
+  guardarBorrador();
+  actualizarNav();
+  if (ev.type === "change" && (t === "likert" || t === "opcion")) siguienteSinResponder(caja);
+}
+
+// Después de responder, baja suavemente a la próxima pregunta pendiente de la sección.
+function siguienteSinResponder(caja) {
+  var sec = caja.parentNode, qs = sec.querySelectorAll(".q:not(.coment)");
+  for (var i = 0; i < qs.length; i++) {
+    if (qs[i] !== caja && !qs[i].classList.contains("lista") && qs[i].compareDocumentPosition(caja) & Node.DOCUMENT_POSITION_PRECEDING) {
+      setTimeout(function (q) { return function () { q.scrollIntoView({ behavior: "smooth", block: "center" }); }; }(qs[i]), 260);
+      return;
+    }
+  }
+}
+
+function faltantes(si) {
+  return SECCIONES[si].preguntas.filter(function (p) { return obligatoria(p) && (respuestas[p.col] === undefined || respuestas[p.col] === ""); });
+}
+
+function ir(n, atras) {
+  document.querySelectorAll(".screen").forEach(function (s) { s.classList.remove("on", "atras"); });
+  paso = n;
+  var id = n === 0 ? "s-inicio" : n <= N ? "s-" + n : n === N + 1 ? "s-resumen" : "s-fin";
+  var el = $(id);
+  if (atras) el.classList.add("atras");
+  el.classList.add("on");
+  if (n === N + 1) pintarResumen();
+  $("nav").hidden = n === 0 || n === N + 2;
+  $("hstep").textContent = n === 0 ? "Bienvenida" : n <= N ? "Sección " + n + " de " + N : n === N + 1 ? "Enviar" : "Listo";
+  window.scrollTo(0, 0);
+  actualizarNav();
+  guardarBorrador();
+}
+
+function actualizarNav() {
+  var tot = 0, hech = 0;
+  SECCIONES.forEach(function (s) { s.preguntas.forEach(function (p) { if (obligatoria(p)) { tot++; if (respuestas[p.col] !== undefined) hech++; } }); });
+  $("bar").style.width = (paso === N + 2 ? 100 : Math.round(hech / tot * 100)) + "%";
+  $("navinfo").innerHTML = "<b>" + hech + "</b> de " + tot + " respondidas";
+  var sig = $("btnSig");
+  if (paso === N + 1) { sig.textContent = "Enviar respuestas ✓"; sig.disabled = enviando; }
+  else { sig.innerHTML = paso === N ? "Revisar →" : "Siguiente →"; sig.disabled = false; }
+}
+
+function siguiente() {
+  if (paso >= 1 && paso <= N) {
+    var f = faltantes(paso - 1);
+    if (f.length) {
+      f.forEach(function (p) { $(p._id).classList.add("falta"); });
+      $(f[0]._id).scrollIntoView({ behavior: "smooth", block: "center" });
+      toast(f.length === 1 ? "Falta 1 pregunta por responder" : "Faltan " + f.length + " preguntas por responder");
+      return;
+    }
+    ir(paso + 1);
+  } else if (paso === N + 1) {
+    enviar();
+  }
+}
+
+function pintarResumen() {
+  $("resumen").innerHTML = SECCIONES.map(function (s, i) {
+    var f = faltantes(i).length;
+    return '<button class="rrow" data-ir="' + (i + 1) + '"><span class="e">' + s.icono + '</span><span class="t">' + esc(s.titulo) + "</span>" +
+      '<span class="s' + (f ? " no" : "") + '">' + (f ? "Faltan " + f : "Completa ✓") + "</span></button>";
+  }).join("");
+}
+
+function enviar() {
+  if (enviando) return;
+  for (var i = 0; i < N; i++) {
+    if (faltantes(i).length) { toast("Complete la sección «" + SECCIONES[i].titulo + "» antes de enviar"); ir(i + 1, true); setTimeout(siguiente, 300); return; }
+  }
+  enviando = true;
+  actualizarNav();
+  $("fin").innerHTML = '<div class="spinner"></div><h2>Enviando sus respuestas…</h2><p>No cierre esta ventana.</p>';
+  ir(N + 2);
+
+  var datos = { respuestas: respuestas };
+  var ok = function (r) {
+    enviando = false;
+    if (r && r.ok === false) return fallo(r.error);
+    borrarBorrador();
+    $("fin").innerHTML = '<div class="ok">✓</div><h2>¡Gracias por participar!</h2>' +
+      "<p>Sus respuestas quedaron registradas de forma anónima. Su opinión nos ayuda a construir una cultura de Salud, Seguridad y Ambiente más fuerte en Holcim Colombia.</p>" +
+      '<button class="big alt" id="btnOtra">Enviar otra respuesta</button>';
+  };
+  var fallo = function (msg) {
+    enviando = false;
+    $("fin").innerHTML = '<div class="ok" style="background:var(--danger)">!</div><h2>No se pudo enviar</h2>' +
+      "<p>Sus respuestas siguen guardadas en este dispositivo. Revise la conexión e intente de nuevo.</p>" +
+      '<div class="errbox"><b>Detalle:</b> ' + esc(msg || "Error de conexión") + "</div>" +
+      '<button class="big" id="btnReintentar">Reintentar envío</button>';
+  };
+
+  if (window.google && google.script && google.script.run) {
+    google.script.run.withSuccessHandler(ok).withFailureHandler(function (e) { fallo(e && e.message); }).registrarRespuesta(datos);
+  } else if (!URL_WEBAPP) {
+    fallo("Falta configurar URL_WEBAPP en el archivo index.html (ver README).");
+  } else {
+    // text/plain evita la consulta previa de CORS que Apps Script no responde.
+    fetch(URL_WEBAPP, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(datos) })
+      .then(function (r) { return r.json(); })
+      .then(ok)
+      .catch(function (e) { fallo(e && e.message); });
+  }
+}
+
+function reiniciar() {
+  respuestas = {};
+  document.querySelectorAll("#secciones input").forEach(function (i) { i.checked = false; });
+  document.querySelectorAll("#secciones select, #secciones textarea").forEach(function (i) { i.value = ""; });
+  document.querySelectorAll("#secciones .cnt span").forEach(function (s) { s.textContent = "0"; });
+  document.querySelectorAll("#secciones .q").forEach(function (q) { q.classList.remove("lista", "falta"); });
+  ir(0, true);
+}
+
+function restaurar(b) {
+  respuestas = b.r || {};
+  SECCIONES.forEach(function (s) {
+    s.preguntas.forEach(function (p) {
+      var v = respuestas[p.col], t = tipoDe(p), caja = $(p._id);
+      if (v === undefined) return;
+      if (t === "likert") {
+        var ei = ESCALA.map(function (e) { return e.valor; }).indexOf(v);
+        if (ei < 0) { delete respuestas[p.col]; return; }
+        $(p._id + "_" + ei).checked = true;
+      } else if (t === "opcion") {
+        var oi = OPCIONES[p.op].indexOf(v);
+        if (oi < 0) { delete respuestas[p.col]; return; }
+        $(p._id + "_" + oi).checked = true;
+      } else {
+        var el = caja.querySelector("select, textarea");
+        el.value = v;
+        if (t === "lista" && el.value !== v) { delete respuestas[p.col]; return; }
+        if (t === "texto") caja.querySelector(".cnt span").textContent = v.length;
+      }
+      if (t !== "texto") caja.classList.add("lista");
+    });
+  });
+  var p = Math.min(Math.max(+b.p || 0, 0), N + 1);
+  ir(p);
+  if (p > 0) toast("Retomamos donde iba");
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  pintarInicio();
+  pintarSecciones();
+  $("secciones").addEventListener("change", alCambiar);
+  $("secciones").addEventListener("input", function (ev) { if (ev.target.tagName === "TEXTAREA") alCambiar(ev); });
+  $("btnComenzar").addEventListener("click", function () { ir(1); });
+  $("btnSig").addEventListener("click", siguiente);
+  $("btnAtras").addEventListener("click", function () { if (paso > 0 && !enviando) ir(paso - 1, true); });
+  $("resumen").addEventListener("click", function (ev) { var b = ev.target.closest("[data-ir]"); if (b) ir(+b.dataset.ir, true); });
+  $("fin").addEventListener("click", function (ev) {
+    if (ev.target.id === "btnOtra") reiniciar();
+    if (ev.target.id === "btnReintentar") { ir(N + 1); enviar(); }
+  });
+  var b = leerBorrador();
+  if (b && b.r && Object.keys(b.r).length) restaurar(b);
+  actualizarNav();
+});
+</script>
+</body>
+</html>
