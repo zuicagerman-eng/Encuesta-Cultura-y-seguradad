@@ -11,6 +11,13 @@ funcionando.
   Bienvenida, 9 secciones (datos generales + 8 dimensiones), revisión y envío. Valida las
   preguntas obligatorias y permite "Enviar otra respuesta" para equipos compartidos en planta.
   No guarda nada en el navegador: al abrir o recargar siempre empieza en blanco.
+  - **Tema claro y oscuro**: el botón del sol o la luna. La primera vez sigue el tema del
+    celular o computador; después recuerda lo que la persona eligió.
+  - **Ayuda**: el botón `? Ayuda` muestra la ayuda de la pantalla que se está viendo.
+  - **Reportar un problema**: desde el mismo panel. El reporte llega a la hoja
+    `Reportes de problemas` (tipo, descripción, pantalla, contacto opcional, navegador, tamaño de
+    pantalla, tema y último error), con la columna `Estado` en "Nuevo" para hacerle seguimiento.
+    No incluye las respuestas de la encuesta.
 - `apps-script/Codigo.gs` — recibe la respuesta y la escribe en la hoja. Ubica cada columna por
   el texto del encabezado, no por posición. Si una pregunta no coincide con ninguna columna,
   rechaza el envío con un mensaje claro en vez de perder la respuesta.
@@ -34,6 +41,7 @@ El Excel exportado trae las preguntas pero no las opciones de respuesta. En `ind
    el archivo de manifiesto" y pegue `apps-script/appsscript.json`.
 3. Elija `prepararHoja` y pulse **Ejecutar** (pide permisos la primera vez). Si el libro no
    tiene la hoja `Respuestas de formulario 1`, la crea con las 46 columnas; si la tiene, la revisa.
+   También crea la hoja `Reportes de problemas`.
 4. **Implementar → Nueva implementación → Aplicación web**. Ejecutar como: *Yo*. Acceso:
    *Cualquier persona*. Copie la URL que termina en `/exec`.
 5. Elija dónde vive la página:

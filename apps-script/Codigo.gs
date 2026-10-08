@@ -6,6 +6,9 @@
  * posiciones: lee la fila 1 y ubica cada respuesta por el texto del encabezado,
  * así que las columnas pueden reordenarse sin romper nada.
  *
+ * También guarda los reportes de problemas que la gente envía desde el botón
+ * de ayuda, en otra hoja ("Reportes de problemas"), sin tocar las respuestas.
+ *
  * Dos formas de recibir respuestas:
  *   - La página la sirve este mismo script (doGet) y llama a registrarRespuesta.
  *   - La página está publicada afuera (GitHub Pages) y hace POST a doPost.
@@ -13,6 +16,9 @@
 
 var HOJA_RESPUESTAS = 'Respuestas de formulario 1';
 var COL_FECHA = 'Marca temporal';
+var HOJA_REPORTES = 'Reportes de problemas';
+var ENC_REPORTES = ['Marca temporal', 'Tipo', 'Descripción', 'Pantalla', 'Contacto',
+                    'Navegador', 'Tamaño de pantalla', 'Tema', 'Último error', 'Estado'];
 
 // Déjelo vacío si el script está creado desde el mismo Google Sheet
 // (Extensiones → Apps Script). Si es un proyecto aparte, pegue el ID del libro.
@@ -81,7 +87,8 @@ function doGet() {
 function doPost(e) {
   var resultado;
   try {
-    resultado = registrarRespuesta(JSON.parse(e.postData.contents));
+    var datos = JSON.parse(e.postData.contents);
+    resultado = datos && datos.tipo === 'reporte' ? registrarReporte(datos) : registrarRespuesta(datos);
   } catch (err) {
     resultado = { ok: false, error: String(err && err.message || err) };
   }
@@ -132,6 +139,27 @@ function registrarRespuesta(datos) {
   return { ok: true };
 }
 
+/** Recibe { reporte: { tipo, descripcion, ... } } y lo agrega a la hoja de reportes. */
+function registrarReporte(datos) {
+  var r = datos && datos.reporte;
+  if (!r || typeof r !== 'object') throw new Error('No llegó el reporte.');
+  var desc = limpiar_(String(r.descripcion || '').slice(0, 500));
+  if (!desc) throw new Error('El reporte llegó sin descripción.');
+  var corto = function (v, n) { return limpiar_(String(v == null ? '' : v).slice(0, n)); };
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+  try {
+    hojaReportes_().appendRow([
+      new Date(), corto(r.tipo, 60), desc, corto(r.pantalla, 120), corto(r.contacto, 120),
+      corto(r.navegador, 300), corto(r.tamano, 30), corto(r.tema, 20), corto(r.error, 300), 'Nuevo'
+    ]);
+  } finally {
+    lock.releaseLock();
+  }
+  return { ok: true };
+}
+
 /**
  * Correr una vez desde el editor (botón Ejecutar). Si el libro no tiene la hoja
  * de respuestas, la crea con las 46 columnas; si ya la tiene, la revisa.
@@ -146,12 +174,31 @@ function prepararHoja() {
     hoja.setFrozenRows(1);
     hoja.getRange('A:A').setNumberFormat('dd/MM/yyyy HH:mm:ss');
     Logger.log('Hoja "%s" creada con %s columnas.', HOJA_RESPUESTAS, ENCABEZADOS.length);
-    return;
+  } else {
+    revisarHoja_(hoja);
   }
+  hojaReportes_();
+  Logger.log('Hoja "%s" lista para recibir reportes de problemas.', HOJA_REPORTES);
+}
+
+function revisarHoja_(hoja) {
   var enc = hoja.getRange(1, 1, 1, hoja.getLastColumn()).getValues()[0].map(clave_);
   var faltan = ENCABEZADOS.filter(function (h) { return enc.indexOf(clave_(h)) < 0; });
   Logger.log('Hoja "%s": %s columnas, %s respuestas.', HOJA_RESPUESTAS, enc.length, hoja.getLastRow() - 1);
   Logger.log(faltan.length ? 'OJO, faltan estas columnas: ' + faltan.join(' | ') : 'Todas las columnas están. Lista para recibir respuestas.');
+}
+
+// La hoja de reportes se crea sola la primera vez que se necesita.
+function hojaReportes_() {
+  var libro = libro_();
+  var hoja = libro.getSheetByName(HOJA_REPORTES);
+  if (!hoja) {
+    hoja = libro.insertSheet(HOJA_REPORTES);
+    hoja.getRange(1, 1, 1, ENC_REPORTES.length).setValues([ENC_REPORTES]).setFontWeight('bold');
+    hoja.setFrozenRows(1);
+    hoja.getRange('A:A').setNumberFormat('dd/MM/yyyy HH:mm:ss');
+  }
+  return hoja;
 }
 
 function libro_() {
