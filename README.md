@@ -24,8 +24,8 @@ El Excel exportado trae las preguntas pero no las opciones de respuesta. En `ind
 
 - `OPCIONES` — plantas, tipo de vinculación, cargo, rango de edad, antigüedad y la pregunta de
   desviaciones.
-- `ESCALA` — hoy guarda 1 a 5 (escala lineal). Si en el Form eran opciones con texto, cambie
-  `valor` por ese texto.
+- `ESCALA` — ya tiene las 7 opciones del Form ("Totalmente de Acuerdo" … "Totalmente en
+  Desacuerdo"), con el mismo texto que se guarda en la hoja.
 
 ## Puesta en marcha
 

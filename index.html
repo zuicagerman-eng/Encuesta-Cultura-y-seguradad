@@ -57,7 +57,7 @@
   .anon{display:flex;gap:12px;align-items:flex-start;background:#eaf7d6;border-radius:14px;padding:14px 16px;margin-top:16px;color:#2f4a10;font-size:14.5px;line-height:1.5}
   .anon b{display:block;color:#24400a}
   .anon span.ic{font-size:22px}
-  .escala-demo{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:14px}
+  .escala-demo{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:14px}
   .escala-demo div{text-align:center;font-size:11.5px;color:var(--muted);line-height:1.25}
   .escala-demo div b{display:block;font-size:22px;margin-bottom:4px}
 
@@ -80,17 +80,15 @@
   .q.falta .qerr{display:block}
 
   /* Escala Likert */
-  .likert{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:16px}
+  .likert{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:16px}
   .likert input,.chips input{position:absolute;opacity:0;pointer-events:none}
   .lk{position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;cursor:pointer;border:2px solid var(--line);border-radius:14px;padding:12px 4px 10px;
-    font-size:12px;line-height:1.2;color:var(--muted);font-weight:600;transition:transform .15s,border-color .2s,background .2s,color .2s;user-select:none;-webkit-tap-highlight-color:transparent}
+    font-size:11.5px;line-height:1.2;color:var(--muted);font-weight:600;transition:transform .15s,border-color .2s,background .2s,color .2s;user-select:none;-webkit-tap-highlight-color:transparent}
   .lk .face{font-size:28px;line-height:1;filter:grayscale(1) opacity(.55);transition:filter .2s,transform .2s}
-  .lk .num{font-size:11px;font-weight:800;color:#9aa8bb}
   .lk:hover{border-color:var(--c);transform:translateY(-2px)}
   .lk:hover .face{filter:none}
   input:checked + .lk{border-color:var(--c);background:var(--c);color:#fff;transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.15)}
   input:checked + .lk .face{filter:none;transform:scale(1.15)}
-  input:checked + .lk .num{color:rgba(255,255,255,.85)}
   input:focus-visible + .lk,input:focus-visible + .chip{outline:3px solid var(--cyan);outline-offset:2px}
 
   /* Opciones (datos generales) */
@@ -148,12 +146,14 @@
   #toast{position:fixed;left:50%;bottom:92px;transform:translate(-50%,20px);opacity:0;background:#fff;color:var(--ink);font-weight:600;font-size:14px;padding:12px 18px;border-radius:12px;box-shadow:0 12px 30px rgba(0,0,0,.3);transition:.3s;z-index:40;pointer-events:none;max-width:calc(100% - 32px);text-align:center}
   #toast.on{opacity:1;transform:translate(-50%,0)}
 
-  @media (max-width:640px){
-    .htit span{display:none}
+  @media (max-width:820px){
     .likert{grid-template-columns:1fr;gap:6px}
     .lk{flex-direction:row;justify-content:flex-start;gap:12px;padding:10px 14px;font-size:14px;text-align:left}
     .lk .face{font-size:24px}
-    .lk .num{margin-left:auto}
+    .escala-demo{grid-template-columns:repeat(4,1fr);row-gap:12px}
+  }
+  @media (max-width:640px){
+    .htit span{display:none}
     .q{padding:18px 16px 16px}
     .qerr{margin-left:0}
     .nbtn{padding:13px 16px}
@@ -263,15 +263,16 @@ var OPCIONES = {
   desviacion: ["Sí", "No", "No he reportado desviaciones"]
 };
 
-// Escala de calificación. "valor" es lo que se guarda en la hoja.
-// Si en el Form era una escala lineal 1 a 5, deje los números; si eran
-// opciones de texto, cambie "valor" por el texto exacto de cada opción.
+// Escala de calificación, igual al Form: mismo texto, mismas mayúsculas y
+// mismo orden. Ese texto es el que se guarda en la hoja.
 var ESCALA = [
-  { valor: 1, texto: "Totalmente en desacuerdo", cara: "😟", color: "#e23b32" },
-  { valor: 2, texto: "En desacuerdo",            cara: "🙁", color: "#ef7d00" },
-  { valor: 3, texto: "Ni de acuerdo ni en desacuerdo", cara: "😐", color: "#d9a300" },
-  { valor: 4, texto: "De acuerdo",               cara: "🙂", color: "#6fae1f" },
-  { valor: 5, texto: "Totalmente de acuerdo",    cara: "😄", color: "#2f9e4a" }
+  { valor: "Totalmente de Acuerdo",          cara: "😄", color: "#2f9e4a" },
+  { valor: "De acuerdo",                     cara: "😀", color: "#4fa832" },
+  { valor: "Un poco de Acuerdo",             cara: "🙂", color: "#86b51c" },
+  { valor: "Ni de acuerdo ni en desacuerdo", cara: "😐", color: "#d9a300" },
+  { valor: "Un poco en Desacuerdo",          cara: "😕", color: "#ef8a00" },
+  { valor: "En Desacuerdo",                  cara: "🙁", color: "#e5601f" },
+  { valor: "Totalmente en Desacuerdo",       cara: "😟", color: "#e23b32" }
 ];
 
 var MAX_COMENTARIO = 1000;
@@ -357,7 +358,7 @@ var SECCIONES = [
 
 /* ====================== LÓGICA ====================== */
 
-var CLAVE_BORRADOR = "encuesta-cultura-hse-2026";
+var CLAVE_BORRADOR = "encuesta-cultura-hse-2026-v2";
 var respuestas = {};
 var paso = 0;              // 0 = bienvenida, 1..N = secciones, N+1 = resumen, N+2 = fin
 var N = SECCIONES.length;
@@ -388,7 +389,7 @@ function pintarInicio() {
     return '<div class="pill" style="animation-delay:' + (i * 60) + 'ms"><span>' + s.icono + "</span>" + esc(s.titulo) + "</div>";
   }).join("");
   $("escalaDemo").innerHTML = ESCALA.map(function (e) {
-    return "<div><b>" + e.cara + "</b>" + esc(e.texto) + "</div>";
+    return "<div><b>" + e.cara + "</b>" + esc(e.valor) + "</div>";
   }).join("");
 }
 
@@ -408,7 +409,7 @@ function pintarSecciones() {
       if (t === "likert") {
         html += '<div class="likert" role="radiogroup" aria-label="' + esc(p.col) + '">' + ESCALA.map(function (e, ei) {
           return '<input type="radio" name="' + id + '" id="' + id + "_" + ei + '" value="' + ei + '">' +
-            '<label class="lk" for="' + id + "_" + ei + '" style="--c:' + e.color + '"><span class="face">' + e.cara + "</span>" + esc(e.texto) + '<span class="num">' + e.valor + "</span></label>";
+            '<label class="lk" for="' + id + "_" + ei + '" style="--c:' + e.color + '"><span class="face">' + e.cara + "</span>" + esc(e.valor) + "</label>";
         }).join("") + "</div>";
       } else if (t === "opcion") {
         html += '<div class="chips" role="radiogroup">' + OPCIONES[p.op].map(function (o, oi) {
