@@ -40,13 +40,13 @@
   @keyframes sube{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
   /* Bienvenida */
-  .hero{color:#fff;padding:26px 4px 18px}
+  .hero{color:#fff;padding:26px 4px 18px;text-align:center}
   .eyebrow{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:12px}
   .hero h1{font-size:clamp(28px,5.6vw,46px);line-height:1.08;font-weight:800;letter-spacing:-.01em}
   .hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--cyan),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .hero p.lead{margin-top:14px;font-size:16.5px;line-height:1.55;color:#c9d6e8;max-width:720px}
-  .pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:22px 0 6px}
-  .pill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 14px;color:#fff;display:flex;gap:10px;align-items:center;font-size:13.5px;font-weight:600;
+  .hero p.lead{margin:14px auto 0;font-size:16.5px;line-height:1.55;color:#c9d6e8;max-width:720px}
+  .pillars{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:22px 0 6px}
+  .pill{flex:0 1 165px;text-align:left;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 14px;color:#fff;display:flex;gap:10px;align-items:center;font-size:13.5px;font-weight:600;
     animation:sube .5s ease both}
   .pill span{font-size:22px}
   .card{background:#fff;border-radius:18px;box-shadow:0 18px 40px rgba(0,0,0,.25);padding:24px 22px;margin-top:16px}
@@ -62,7 +62,7 @@
   .escala-demo div b{display:block;font-size:22px;margin-bottom:4px}
 
   /* Encabezado de sección */
-  .shead{display:flex;gap:16px;align-items:center;color:#fff;padding:12px 2px 6px}
+  .shead{display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;color:#fff;padding:12px 2px 6px}
   .sicon{flex:none;width:64px;height:64px;border-radius:18px;display:grid;place-items:center;font-size:32px;background:var(--acc);box-shadow:0 10px 24px rgba(0,0,0,.25)}
   .shead small{display:block;font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);filter:brightness(1.35)}
   .shead h2{font-size:clamp(21px,4.2vw,30px);line-height:1.15;margin-top:2px}
@@ -263,16 +263,16 @@ var OPCIONES = {
   desviacion: ["Sí", "No", "No he reportado desviaciones"]
 };
 
-// Escala de calificación, igual al Form: mismo texto, mismas mayúsculas y
-// mismo orden. Ese texto es el que se guarda en la hoja.
+// Escala de calificación: mismo texto y mayúsculas del Form, que es lo que se
+// guarda en la hoja. Se muestra de desacuerdo (izquierda) a acuerdo (derecha).
 var ESCALA = [
-  { valor: "Totalmente de Acuerdo",          cara: "😄", color: "#2f9e4a" },
-  { valor: "De acuerdo",                     cara: "😀", color: "#4fa832" },
-  { valor: "Un poco de Acuerdo",             cara: "🙂", color: "#86b51c" },
-  { valor: "Ni de acuerdo ni en desacuerdo", cara: "😐", color: "#d9a300" },
-  { valor: "Un poco en Desacuerdo",          cara: "😕", color: "#ef8a00" },
+  { valor: "Totalmente en Desacuerdo",       cara: "😟", color: "#e23b32" },
   { valor: "En Desacuerdo",                  cara: "🙁", color: "#e5601f" },
-  { valor: "Totalmente en Desacuerdo",       cara: "😟", color: "#e23b32" }
+  { valor: "Un poco en Desacuerdo",          cara: "😕", color: "#ef8a00" },
+  { valor: "Ni de acuerdo ni en desacuerdo", cara: "😐", color: "#d9a300" },
+  { valor: "Un poco de Acuerdo",             cara: "🙂", color: "#86b51c" },
+  { valor: "De acuerdo",                     cara: "😀", color: "#4fa832" },
+  { valor: "Totalmente de Acuerdo",          cara: "😄", color: "#2f9e4a" }
 ];
 
 var MAX_COMENTARIO = 1000;
