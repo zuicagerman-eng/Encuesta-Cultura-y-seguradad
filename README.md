@@ -1,5 +1,11 @@
 # Encuesta de Cultura de Salud, Seguridad y Ambiente 2026 — Holcim Colombia
 
+## 👉 [Abrir la encuesta](https://zuicagerman-eng.github.io/Encuesta-Cultura-y-seguradad/)
+
+`https://zuicagerman-eng.github.io/Encuesta-Cultura-y-seguradad/` — este es el enlace que se
+comparte (el mismo del QR). La página del repositorio en github.com muestra el código, no la
+encuesta.
+
 Versión HTML, dinámica y anónima, de la encuesta que hoy está en Google Forms. Cada respuesta
 cae como una fila nueva en la misma hoja del Form (`Respuestas de formulario 1`), con las mismas
 46 columnas y el mismo orden, así que los informes y tablas dinámicas que ya leen esa hoja siguen
