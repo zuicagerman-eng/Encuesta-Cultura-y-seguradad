@@ -29,10 +29,11 @@ El Excel exportado trae las preguntas pero no las opciones de respuesta. En `ind
 
 ## Puesta en marcha
 
-1. Abra el Google Sheet de respuestas → **Extensiones → Apps Script**.
+1. Abra el Google Sheet de respuestas (o uno nuevo, en blanco) → **Extensiones → Apps Script**.
 2. Pegue `apps-script/Codigo.gs` en `Código.gs`. En *Configuración del proyecto* active "Mostrar
    el archivo de manifiesto" y pegue `apps-script/appsscript.json`.
-3. Corra `verificarHoja` una vez (pide permisos); el registro debe decir 46 columnas.
+3. Elija `prepararHoja` y pulse **Ejecutar** (pide permisos la primera vez). Si el libro no
+   tiene la hoja `Respuestas de formulario 1`, la crea con las 46 columnas; si la tiene, la revisa.
 4. **Implementar → Nueva implementación → Aplicación web**. Ejecutar como: *Yo*. Acceso:
    *Cualquier persona*. Copie la URL que termina en `/exec`.
 5. Elija dónde vive la página:
