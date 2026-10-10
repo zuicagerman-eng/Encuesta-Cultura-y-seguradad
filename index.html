@@ -558,7 +558,9 @@
 // URL /exec de la aplicación web de Apps Script (ver README). Solo hace falta
 // cuando esta página se publica fuera de Apps Script (GitHub Pages, intranet).
 // Si la página la sirve el mismo Apps Script, se ignora.
-var URL_WEBAPP = "";
+// Apps Script del Sheet de Holcim. Se usa la forma sin "/a/macros/holcim.com/": es la
+// misma implementación y no obliga a iniciar sesión con una cuenta de Holcim.
+var URL_WEBAPP = "https://script.google.com/macros/s/AKfycbyd25O-4SJDwVFnsevxKMVjZdt1iP7uiUu9T_g5dt7sjgWKCEoyehcqr5tqFv8PL9JH/exec";
 
 // Dirección pública de la encuesta: la del QR, el video y los enlaces para compartir.
 var URL_PUBLICA = "https://zuicagerman-eng.github.io/Encuesta-Cultura-y-seguradad/";
@@ -1170,7 +1172,13 @@ function llamar(funcion, datos, ok, fallo) {
     fetch(URL_WEBAPP, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(datos) })
       .then(function (r) { return r.json(); })
       .then(resp)
-      .catch(function (e) { fallo(e && e.message); });
+      .catch(function (e) {
+        // Sin respuesta legible: casi siempre es que la aplicación web pide iniciar sesión
+        // (acceso restringido a la empresa) o que no hay conexión.
+        fallo(e && /fetch|NetworkError|JSON|Unexpected token/i.test(e.message)
+          ? "No se pudo conectar con la hoja de respuestas. Revise su conexión; si el problema sigue, avise al personal H&S."
+          : e && e.message);
+      });
   }
 }
 

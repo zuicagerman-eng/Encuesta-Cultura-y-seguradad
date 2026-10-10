@@ -64,6 +64,12 @@ En `index.html`, bloque `CONFIGURACIÓN`: `OPCIONES` (planta, vinculación, carg
 y desviaciones) y `ESCALA` (las 7 opciones de acuerdo) tienen el texto exacto del Google Form, que
 es lo que se guarda en la hoja. Si el Form cambia, cámbielas aquí letra por letra.
 
+## Conexión actual
+
+Conectada al Sheet de Holcim: `URL_WEBAPP` en `index.html` apunta a la aplicación web publicada desde
+esa cuenta. Si se vuelve a publicar el script, use **Implementar → Administrar implementaciones →
+Editar → Nueva versión** para que la URL no cambie.
+
 ## Puesta en marcha
 
 1. Suba `plantilla/Encuesta_Cultura_HSE_2026_Respuestas.xlsx` a Drive y ábralo con Google Sheets
