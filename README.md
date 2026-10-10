@@ -42,6 +42,16 @@ funcionando.
   ve en la portada y al final, para que otros lo escaneen (con botones para copiar el enlace,
   copiar la imagen del QR y descargarla). En el celular no se muestra el QR (ya está en el celular) ni hay botones de
   compartir, y la bienvenida queda en el botón "Ver bienvenida" para no gastar datos.
+- `plantilla/Encuesta_Cultura_HSE_2026_Respuestas.xlsx` — el libro de respuestas, listo para
+  subir a Google Sheets. Hojas:
+  - `Respuestas de formulario 1`: las 46 columnas del Form, en el mismo orden y con el mismo
+    texto. Cada respuesta de la encuesta llega aquí como una fila nueva, igual que un Form.
+  - `Reportes de problemas`: lo que llega del botón Ayuda, con columna `Estado`.
+  - `Resumen`: total de respuestas, respuestas por planta, vinculación y cargo, y % favorable,
+    neutral y desfavorable por dimensión. Son fórmulas: se actualiza solo.
+  - `Diccionario`: cada columna, su sección y los valores que puede tener.
+  - `Léame`: cómo conectarlo.
+  Se regenera con `python plantilla/generar_plantilla.py plantilla/columnas_form.json salida.xlsx`.
 - `apps-script/Codigo.gs` — recibe la respuesta y la escribe en la hoja. Ubica cada columna por
   el texto del encabezado, no por posición. Si una pregunta no coincide con ninguna columna,
   rechaza el envío con un mensaje claro en vez de perder la respuesta.
@@ -56,7 +66,9 @@ es lo que se guarda en la hoja. Si el Form cambia, cámbielas aquí letra por le
 
 ## Puesta en marcha
 
-1. Abra el Google Sheet de respuestas (o uno nuevo, en blanco) → **Extensiones → Apps Script**.
+1. Suba `plantilla/Encuesta_Cultura_HSE_2026_Respuestas.xlsx` a Drive y ábralo con Google Sheets
+   (**Archivo → Guardar como Hojas de cálculo de Google**). También sirve el Sheet del Form o uno en
+   blanco. Después: **Extensiones → Apps Script**.
 2. Pegue `apps-script/Codigo.gs` en `Código.gs`. En *Configuración del proyecto* active "Mostrar
    el archivo de manifiesto" y pegue `apps-script/appsscript.json`.
 3. Elija `prepararHoja` y pulse **Ejecutar** (pide permisos la primera vez). Si el libro no
