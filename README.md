@@ -77,7 +77,11 @@ persona») y escribir directo en un Sheet de Holcim, igual que `ID_HOJA` en la r
 
 1. En el Sheet de Holcim: **Compartir** → la cuenta personal que publica el script, como **Editor**.
 2. En `Codigo.gs`, pegar la dirección (o el ID) de ese Sheet en `ID_LIBRO`.
-3. Ejecutar `prepararHoja`: en ese Sheet crea lo que falte —`Respuestas de formulario 1` con las 46
+   Pegar también `appsscript.json` (Configuración del proyecto → «Mostrar el archivo de manifiesto»):
+   declara el permiso completo de Hojas de cálculo, sin el cual Google solo deja abrir la hoja propia
+   («You do not have permission to call SpreadsheetApp.openById»).
+3. Ejecutar `prepararHoja`: si el Sheet ya tiene una pestaña con las 46 columnas del Form (por ejemplo
+   `Form_Responses`), escribe ahí; si no, crea lo que falte —`Respuestas de formulario 1` con las 46
    columnas, `Reportes de problemas` y `Resumen` con sus fórmulas— y no toca las demás pestañas.
    Si ya tenía un «Resumen» propio, el de la encuesta queda como «Resumen encuesta». El registro dice
    en qué Sheet se guarda.

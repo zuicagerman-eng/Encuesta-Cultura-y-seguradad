@@ -169,7 +169,10 @@ function registrarReporte(datos) {
  */
 function prepararHoja() {
   var libro = libro_();
-  var hoja = libro.getSheetByName(HOJA_RESPUESTAS);
+  var hoja = buscarHojaRespuestas_(libro);
+  if (hoja && hoja.getName() !== HOJA_RESPUESTAS) {
+    Logger.log('Las respuestas van a la hoja "%s": ya tiene las columnas del Form.', hoja.getName());
+  }
   if (!hoja) {
     hoja = libro.insertSheet(HOJA_RESPUESTAS);
     ponerTitulos_(hoja);
@@ -180,6 +183,7 @@ function prepararHoja() {
   } else {
     revisarHoja_(hoja);
   }
+  PropertiesService.getScriptProperties().setProperty('HOJA_RESPUESTAS', hoja.getName());
   hojaReportes_();
   Logger.log('Hoja "%s" lista para recibir reportes de problemas.', HOJA_REPORTES);
   // Si el Sheet ya tiene un «Resumen» que no es el de la encuesta, el nuestro va aparte.
@@ -229,14 +233,14 @@ function crearResumen_(libro, hojaResp, nombre) {
   // Columna real de cada título (la hoja de respuestas puede tener otro orden)
   var enc = hojaResp.getRange(1, 1, 1, hojaResp.getLastColumn()).getValues()[0].map(clave_);
   var col = function (i) { var k = enc.indexOf(clave_(ENCABEZADOS[i])); return k < 0 ? 0 : k + 1; };
-  var ref = "'" + HOJA_RESPUESTAS + "'!";
+  var ref = "'" + hojaResp.getName() + "'!";
   var rango = function (c1, c2) { return ref + '$' + letra_(c1) + '$2:$' + letra_(c2) + '$' + FILAS_RESUMEN; };
   var r = libro.insertSheet(nombre, 0);
   var celdas = [];   // [fila, columna, valor o fórmula]
   var poner = function (f, c, v) { celdas.push([f, c, v]); };
 
   poner(1, 1, 'Encuesta de Cultura de Salud, Seguridad y Ambiente 2026 — Resumen');
-  poner(2, 1, "Se calcula solo con lo que llega a la hoja '" + HOJA_RESPUESTAS + "'. No escriba en esta hoja.");
+  poner(2, 1, "Se calcula solo con lo que llega a la hoja '" + hojaResp.getName() + "'. No escriba en esta hoja.");
   poner(4, 1, 'Respuestas recibidas'); poner(4, 2, '=COUNTA(' + rango(col(0), col(0)) + ')');
   poner(5, 1, 'Primera respuesta');    poner(5, 2, '=IF(B4=0,"",MIN(' + rango(col(0), col(0)) + '))');
   poner(6, 1, 'Última respuesta');     poner(6, 2, '=IF(B4=0,"",MAX(' + rango(col(0), col(0)) + '))');
@@ -311,7 +315,7 @@ function ponerTitulos_(hoja) {
 function revisarHoja_(hoja) {
   var enc = hoja.getRange(1, 1, 1, hoja.getLastColumn()).getValues()[0].map(clave_);
   var faltan = ENCABEZADOS.filter(function (h) { return enc.indexOf(clave_(h)) < 0; });
-  Logger.log('Hoja "%s": %s columnas, %s respuestas.', HOJA_RESPUESTAS, enc.length, hoja.getLastRow() - 1);
+  Logger.log('Hoja "%s": %s columnas, %s respuestas.', hoja.getName(), enc.length, hoja.getLastRow() - 1);
   Logger.log(faltan.length ? 'OJO, faltan estas columnas: ' + faltan.join(' | ') : 'Todas las columnas están. Lista para recibir respuestas.');
 }
 
@@ -334,6 +338,11 @@ function libro_() {
   try {
     return SpreadsheetApp.openById(id);
   } catch (e) {
+    if (/auth\/spreadsheets|permission to call|permiso para llamar/i.test(e.message)) {
+      throw new Error('Al script le falta el permiso completo de Hojas de cálculo para abrir otro Sheet. ' +
+        'En Configuración del proyecto active «Mostrar el archivo de manifiesto appsscript.json», pegue el ' +
+        'appsscript.json del repositorio, guarde y vuelva a ejecutar prepararHoja para autorizar. Detalle: ' + e.message);
+    }
     throw new Error('No se pudo abrir el Sheet de ID_LIBRO. La cuenta ' + Session.getEffectiveUser().getEmail() +
       ' tiene que ser EDITORA de ese Sheet (Compartir → Editor). Detalle: ' + e.message);
   }
@@ -347,9 +356,27 @@ function soloId_(texto) {
 }
 
 function hoja_() {
-  var hoja = libro_().getSheetByName(HOJA_RESPUESTAS);
+  var libro = libro_();
+  var guardada = PropertiesService.getScriptProperties().getProperty('HOJA_RESPUESTAS');
+  var hoja = (guardada && libro.getSheetByName(guardada)) || buscarHojaRespuestas_(libro);
   if (!hoja) throw new Error('No existe la hoja "' + HOJA_RESPUESTAS + '". Corra prepararHoja desde el editor.');
   return hoja;
+}
+
+// La hoja de respuestas: la que se llama «Respuestas de formulario 1» o, si no
+// hay, la que ya tenga en la fila 1 todas las columnas del Form (como
+// «Form_Responses» en un Sheet que viene de una exportación del Form).
+function buscarHojaRespuestas_(libro) {
+  var porNombre = libro.getSheetByName(HOJA_RESPUESTAS);
+  if (porNombre) return porNombre;
+  var hojas = libro.getSheets();
+  for (var i = 0; i < hojas.length; i++) {
+    var n = hojas[i].getLastColumn();
+    if (n < ENCABEZADOS.length) continue;
+    var enc = hojas[i].getRange(1, 1, 1, n).getValues()[0].map(clave_);
+    if (ENCABEZADOS.every(function (h) { return enc.indexOf(clave_(h)) >= 0; })) return hojas[i];
+  }
+  return null;
 }
 
 // Los encabezados del Form traen espacios sobrantes al final; se comparan sin ellos.
