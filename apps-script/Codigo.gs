@@ -20,8 +20,11 @@ var HOJA_REPORTES = 'Reportes de problemas';
 var ENC_REPORTES = ['Marca temporal', 'Tipo', 'Descripción', 'Pantalla', 'Contacto',
                     'Navegador', 'Tamaño de pantalla', 'Tema', 'Último error', 'Estado'];
 
-// Déjelo vacío si el script está creado desde el mismo Google Sheet
-// (Extensiones → Apps Script). Si es un proyecto aparte, pegue el ID del libro.
+// Dónde se guardan las respuestas (como ID_HOJA en la reinducción):
+//   - Vacío: en el mismo Google Sheet donde está este script.
+//   - Con la dirección (o solo el ID) de otro Sheet: escribe directo allá, por
+//     ejemplo en el Sheet de Holcim. La cuenta que publica este script tiene que
+//     ser EDITORA de ese Sheet.
 var ID_LIBRO = '';
 
 var MAX_TEXTO = 1000;
@@ -169,16 +172,140 @@ function prepararHoja() {
   var hoja = libro.getSheetByName(HOJA_RESPUESTAS);
   if (!hoja) {
     hoja = libro.insertSheet(HOJA_RESPUESTAS);
-    hoja.getRange(1, 1, 1, ENCABEZADOS.length).setValues([ENCABEZADOS])
-      .setFontWeight('bold').setWrap(true).setVerticalAlignment('top');
-    hoja.setFrozenRows(1);
-    hoja.getRange('A:A').setNumberFormat('dd/MM/yyyy HH:mm:ss');
+    ponerTitulos_(hoja);
     Logger.log('Hoja "%s" creada con %s columnas.', HOJA_RESPUESTAS, ENCABEZADOS.length);
+  } else if (hoja.getLastColumn() === 0) {
+    ponerTitulos_(hoja);
+    Logger.log('La hoja "%s" estaba vacía: se le pusieron las %s columnas.', HOJA_RESPUESTAS, ENCABEZADOS.length);
   } else {
     revisarHoja_(hoja);
   }
   hojaReportes_();
   Logger.log('Hoja "%s" lista para recibir reportes de problemas.', HOJA_REPORTES);
+  // Si el Sheet ya tiene un «Resumen» que no es el de la encuesta, el nuestro va aparte.
+  var existente = libro.getSheetByName(HOJA_RESUMEN);
+  var esNuestro = existente && /^Encuesta de Cultura/.test(String(existente.getRange(1, 1).getValues()[0][0]));
+  var nombre = !existente || esNuestro ? HOJA_RESUMEN : HOJA_RESUMEN + ' encuesta';
+  if (libro.getSheetByName(nombre)) {
+    Logger.log('Ya hay una hoja "%s" con el resumen: no se toca.', nombre);
+  } else {
+    crearResumen_(libro, hoja, nombre);
+  }
+  Logger.log('Las respuestas se guardan en: "%s" — %s', libro.getName(), libro.getUrl());
+}
+
+// ---------------------------------------------------------------------------
+// Resumen: las mismas fórmulas del libro de la plantilla, para un Sheet que no
+// salió de ella. Se crea una sola vez; si ya existe, no se toca.
+// ---------------------------------------------------------------------------
+
+var HOJA_RESUMEN = 'Resumen';
+var FILAS_RESUMEN = 5000;
+var OPCIONES_RESUMEN = [
+  ['Planta o sede', 1, ['AGG Planta Mondoñedo', 'CEM Planta Nobsa', 'CORPORATIVO Teleport', 'CORPORATIVO Fundación Holcim',
+    'GEOCYCLE Barrancabermeja', 'GEOCYCLE Nobsa', 'RMX Planta Bello', 'RMX Plantas Valle', 'RMX Planta Chía',
+    'RMX Plantas Boyaca', 'RMX Planta Puente Aranda', 'RMX Planta Sibaté', 'TQC Tocancipá']],
+  ['Vinculación', 2, ['Empleado(a) Holcim', 'Contratista Holcim']],
+  ['Tipo de cargo', 3, ['Director(a)', 'Gerente - Head', 'Jefe - Coordinador(a)', 'Supervisor(a) - Analista', 'Operativo(a)']],
+  ['¿Ha reportado desviaciones sin que se tengan en cuenta?', 6, ['Si', 'No']]
+];
+// [nombre, primera y última afirmación] como posición en ENCABEZADOS (0 = Marca temporal)
+var DIMENSIONES = [
+  ['Valores y compromiso HSE', 7, 10], ['Procesos operacionales', 12, 15], ['Gestión de recursos', 17, 20],
+  ['Supervisión', 22, 25], ['Planificación del trabajo', 27, 30], ['Abordaje de problemas y peligros', 32, 35],
+  ['Cumplimiento de reglas', 37, 40], ['Evaluación subjetiva de riesgos', 42, 44]
+];
+var FAVORABLE = ['Totalmente de Acuerdo', 'De acuerdo', 'Un poco de Acuerdo'];
+var NEUTRAL = ['Ni de acuerdo ni en desacuerdo'];
+var DESFAVORABLE = ['Un poco en Desacuerdo', 'En Desacuerdo', 'Totalmente en Desacuerdo'];
+
+function letra_(n) {
+  var s = '';
+  while (n > 0) { var m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); }
+  return s;
+}
+
+function crearResumen_(libro, hojaResp, nombre) {
+  // Columna real de cada título (la hoja de respuestas puede tener otro orden)
+  var enc = hojaResp.getRange(1, 1, 1, hojaResp.getLastColumn()).getValues()[0].map(clave_);
+  var col = function (i) { var k = enc.indexOf(clave_(ENCABEZADOS[i])); return k < 0 ? 0 : k + 1; };
+  var ref = "'" + HOJA_RESPUESTAS + "'!";
+  var rango = function (c1, c2) { return ref + '$' + letra_(c1) + '$2:$' + letra_(c2) + '$' + FILAS_RESUMEN; };
+  var r = libro.insertSheet(nombre, 0);
+  var celdas = [];   // [fila, columna, valor o fórmula]
+  var poner = function (f, c, v) { celdas.push([f, c, v]); };
+
+  poner(1, 1, 'Encuesta de Cultura de Salud, Seguridad y Ambiente 2026 — Resumen');
+  poner(2, 1, "Se calcula solo con lo que llega a la hoja '" + HOJA_RESPUESTAS + "'. No escriba en esta hoja.");
+  poner(4, 1, 'Respuestas recibidas'); poner(4, 2, '=COUNTA(' + rango(col(0), col(0)) + ')');
+  poner(5, 1, 'Primera respuesta');    poner(5, 2, '=IF(B4=0,"",MIN(' + rango(col(0), col(0)) + '))');
+  poner(6, 1, 'Última respuesta');     poner(6, 2, '=IF(B4=0,"",MAX(' + rango(col(0), col(0)) + '))');
+
+  var fila = 8, titulos = [];
+  OPCIONES_RESUMEN.forEach(function (t) {
+    var c = col(t[1]);
+    titulos.push(fila);
+    poner(fila, 1, t[0]); poner(fila, 2, 'Respuestas'); poner(fila, 3, '% del total');
+    fila++;
+    t[2].forEach(function (o) {
+      poner(fila, 1, o);
+      poner(fila, 2, c ? '=COUNTIF(' + rango(c, c) + ',A' + fila + ')' : 'Falta la columna');
+      poner(fila, 3, '=IF($B$4=0,"",IFERROR(B' + fila + '/$B$4,""))');
+      fila++;
+    });
+    fila++;
+  });
+
+  titulos.push(fila);
+  poner(fila, 1, 'Percepción por dimensión'); poner(fila, 2, 'Calificaciones');
+  poner(fila, 3, '% Favorable'); poner(fila, 4, '% Neutral'); poner(fila, 5, '% Desfavorable');
+  var primeraDim = ++fila;
+  DIMENSIONES.forEach(function (d) {
+    var c1 = col(d[1]), c2 = col(d[2]);
+    poner(fila, 1, d[0]);
+    if (!c1 || !c2 || c2 - c1 !== d[2] - d[1]) {
+      poner(fila, 2, 'Columnas no encontradas');
+    } else {
+      var rg = rango(c1, c2);
+      var suma = function (ops) { return ops.map(function (o) { return 'COUNTIF(' + rg + ',"' + o + '")'; }).join('+'); };
+      poner(fila, 2, '=COUNTA(' + rg + ')');
+      poner(fila, 3, '=IF($B' + fila + '=0,"",(' + suma(FAVORABLE) + ')/$B' + fila + ')');
+      poner(fila, 4, '=IF($B' + fila + '=0,"",(' + suma(NEUTRAL) + ')/$B' + fila + ')');
+      poner(fila, 5, '=IF($B' + fila + '=0,"",(' + suma(DESFAVORABLE) + ')/$B' + fila + ')');
+    }
+    fila++;
+  });
+  poner(fila + 1, 1, 'Favorable = las tres opciones de acuerdo · Neutral = Ni de acuerdo ni en desacuerdo · ' +
+    'Desfavorable = las tres opciones de desacuerdo.');
+
+  celdas.forEach(function (x) {
+    var celda = r.getRange(x[0], x[1]);
+    if (String(x[2]).charAt(0) === '=') celda.setFormula(x[2]); else celda.setValue(x[2]);
+  });
+
+  // Formato
+  r.setColumnWidth(1, 330);
+  for (var k = 2; k <= 5; k++) r.setColumnWidth(k, 120);
+  r.getRange('A1').setFontSize(15).setFontWeight('bold').setFontColor('#071a38');
+  r.getRange('A2').setFontStyle('italic').setFontColor('#5b6b82');
+  r.getRange('A4:A6').setFontWeight('bold');
+  r.getRange('B4:B6').setFontWeight('bold').setHorizontalAlignment('left');
+  r.getRange('B5:B6').setNumberFormat('dd/MM/yyyy HH:mm');
+  titulos.forEach(function (f) {
+    r.getRange(f, 1, 1, f === titulos[titulos.length - 1] ? 5 : 3)
+      .setBackground('#071a38').setFontColor('#ffffff').setFontWeight('bold');
+  });
+  r.getRange(9, 3, fila - 9, 3).setNumberFormat('0.0%');
+  r.getRange(primeraDim, 2, DIMENSIONES.length, 1).setNumberFormat('0');
+  r.setFrozenRows(3);
+  Logger.log('Hoja "%s" creada con las fórmulas del resumen.', nombre);
+}
+
+function ponerTitulos_(hoja) {
+  hoja.getRange(1, 1, 1, ENCABEZADOS.length).setValues([ENCABEZADOS])
+    .setFontWeight('bold').setWrap(true).setVerticalAlignment('top');
+  hoja.setFrozenRows(1);
+  hoja.getRange('A:A').setNumberFormat('dd/MM/yyyy HH:mm:ss');
 }
 
 function revisarHoja_(hoja) {
@@ -192,8 +319,8 @@ function revisarHoja_(hoja) {
 function hojaReportes_() {
   var libro = libro_();
   var hoja = libro.getSheetByName(HOJA_REPORTES);
-  if (!hoja) {
-    hoja = libro.insertSheet(HOJA_REPORTES);
+  if (!hoja) hoja = libro.insertSheet(HOJA_REPORTES);
+  if (hoja.getLastColumn() === 0) {
     hoja.getRange(1, 1, 1, ENC_REPORTES.length).setValues([ENC_REPORTES]).setFontWeight('bold');
     hoja.setFrozenRows(1);
     hoja.getRange('A:A').setNumberFormat('dd/MM/yyyy HH:mm:ss');
@@ -202,7 +329,21 @@ function hojaReportes_() {
 }
 
 function libro_() {
-  return ID_LIBRO ? SpreadsheetApp.openById(ID_LIBRO) : SpreadsheetApp.getActiveSpreadsheet();
+  var id = soloId_(ID_LIBRO);
+  if (!id) return SpreadsheetApp.getActiveSpreadsheet();
+  try {
+    return SpreadsheetApp.openById(id);
+  } catch (e) {
+    throw new Error('No se pudo abrir el Sheet de ID_LIBRO. La cuenta ' + Session.getEffectiveUser().getEmail() +
+      ' tiene que ser EDITORA de ese Sheet (Compartir → Editor). Detalle: ' + e.message);
+  }
+}
+
+// Acepta la dirección completa del Sheet o solo su ID.
+function soloId_(texto) {
+  var t = String(texto || '').trim();
+  var m = t.match(/\/d\/([a-zA-Z0-9_-]{20,})/);
+  return m ? m[1] : t;
 }
 
 function hoja_() {
