@@ -66,8 +66,8 @@ es lo que se guarda en la hoja. Si el Form cambia, cámbielas aquí letra por le
 
 ## Conexión actual
 
-Conectada al Sheet de Holcim: `URL_WEBAPP` en `index.html` apunta a la aplicación web publicada desde
-esa cuenta. Si se vuelve a publicar el script, use **Implementar → Administrar implementaciones →
+Conectada al Sheet de respuestas: `URL_WEBAPP` en `index.html` apunta a su aplicación web, publicada
+con acceso "Cualquier persona" (sin iniciar sesión). Si se vuelve a publicar el script, use **Implementar → Administrar implementaciones →
 Editar → Nueva versión** para que la URL no cambie.
 
 ## Puesta en marcha
