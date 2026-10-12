@@ -198,6 +198,33 @@ function prepararHoja() {
   Logger.log('Las respuestas se guardan en: "%s" — %s', libro.getName(), libro.getUrl());
 }
 
+/**
+ * Correr desde el editor si prepararHoja dice que falta permiso. No cambia nada:
+ *   1) ¿El script tiene el permiso completo de Hojas? (abre su propia hoja por ID)
+ *   2) ¿Puede abrir el Sheet de ID_LIBRO?
+ * Si 1 es SÍ y 2 es NO, quien lo impide es el dueño de ese Sheet (su organización),
+ * no el script: use apps-script/Sincronizar_Holcim.gs desde la cuenta de Holcim.
+ */
+function diagnosticarPermisos() {
+  Logger.log('Cuenta del script: %s', Session.getEffectiveUser().getEmail());
+  var propio = SpreadsheetApp.getActiveSpreadsheet();
+  try {
+    SpreadsheetApp.openById(propio.getId());
+    Logger.log('1) Permiso completo de Hojas de cálculo: SÍ');
+  } catch (e) {
+    Logger.log('1) Permiso completo de Hojas de cálculo: NO. Falta autorizar el script. Detalle: %s', e.message);
+    return;
+  }
+  var id = soloId_(ID_LIBRO);
+  if (!id) { Logger.log('2) ID_LIBRO está vacío: las respuestas van a esta misma hoja.'); return; }
+  try {
+    Logger.log('2) Abre el Sheet de ID_LIBRO: SÍ — "%s"', SpreadsheetApp.openById(id).getName());
+  } catch (e) {
+    Logger.log('2) Abre el Sheet de ID_LIBRO: NO. Lo bloquea el dueño de ese Sheet (su organización), ' +
+      'no el script. Use Sincronizar_Holcim.gs desde la cuenta de Holcim. Detalle: %s', e.message);
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Resumen: las mismas fórmulas del libro de la plantilla, para un Sheet que no
 // salió de ella. Se crea una sola vez; si ya existe, no se toca.

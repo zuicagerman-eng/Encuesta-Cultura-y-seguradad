@@ -87,6 +87,21 @@ persona») y escribir directo en un Sheet de Holcim, igual que `ID_HOJA` en la r
    en qué Sheet se guarda.
 4. **Implementar → Administrar implementaciones → ✏️ → Nueva versión.** La URL no cambia.
 
+## Si Holcim no deja que el script externo abra su Sheet: copia desde Holcim
+
+Holcim puede impedir que un script de una cuenta externa abra sus archivos (el editor no pide
+permiso y `openById` falla). Entonces se hace al revés: la encuesta sigue guardando en el Sheet de la
+cuenta personal, y **el Sheet de Holcim trae las respuestas** con `apps-script/Sincronizar_Holcim.gs`:
+
+1. En el Sheet personal: **Compartir** → el correo de Holcim, como **Lector**.
+2. En el Sheet de Holcim: **Extensiones → Apps Script** (con la cuenta de Holcim) → pegar
+   `Sincronizar_Holcim.gs` y, en `ORIGEN`, la dirección del Sheet personal.
+3. Ejecutar `sincronizar` (pide permisos) y luego `instalarSincronizacion`: corre solo cada 10 minutos.
+
+Agrega al final de la hoja que tenga las columnas del Form (por ejemplo `Form_Responses`) las respuestas
+que todavía no estén, y lo mismo con los reportes. No borra ni cambia nada, no repite filas y no se
+publica. `diagnosticarPermisos` (en `Codigo.gs`) dice cuál de los dos casos es.
+
 ## Puesta en marcha
 
 1. Suba `plantilla/Encuesta_Cultura_HSE_2026_Respuestas.xlsx` a Drive y ábralo con Google Sheets
