@@ -114,21 +114,22 @@ function doPost(e) {
 var HOJA_POBLACION = 'Población';
 // Personas activas del maestro de personal (columna X «División de personal»),
 // contadas por cédula y con externos y aprendices. No aplican: Transcem (TR-) ni
-// HC-MEDELLIN. Es solo el punto de partida: se edita en la hoja «Población».
+// HC-MEDELLIN. Contratistas: cantidades por planta dadas por H&S (Transcem no
+// aplica). Es solo el punto de partida: se edita en la hoja «Población».
 var POBLACION_INICIAL = [
-  ['AGG Planta Mondoñedo', 30, 'HC-MONDOÑEDO'],
-  ['CEM Planta Nobsa', 265, 'HC-NOBSA CEMENTO'],
-  ['CORPORATIVO Fundación Holcim', 14, 'CJ-NOBSA + CJ-TELEPORT'],
-  ['CORPORATIVO Teleport', 113, 'HC-TELEPORT + AF-TELEPORT'],
-  ['GEOCYCLE Barrancabermeja', 11, 'HC-BARRANCABERMEJA'],
-  ['GEOCYCLE Nobsa', 17, 'AF-NOBSA'],
-  ['RMX Planta Bello', 32, 'HC-BELLO'],
-  ['RMX Plantas Valle', 45, 'HC-PALMIRA + HC-CALI'],
-  ['RMX Planta Chía', 44, 'HC-CHIA'],
-  ['RMX Plantas Boyaca', 27, 'HC-NOBSA CONCRETO + HC-TUNJA'],
-  ['RMX Planta Puente Aranda', 203, 'HC-PUENTE ARANDA'],
-  ['RMX Planta Sibaté', 12, 'HC-SIBATE'],
-  ['TQC Tocancipá', 52, 'HC-TQC']
+  ['AGG Planta Mondoñedo', 30, 70, 'HC-MONDOÑEDO'],
+  ['CEM Planta Nobsa', 265, 110, 'HC-NOBSA CEMENTO'],
+  ['CORPORATIVO Fundación Holcim', 14, 15, 'CJ-NOBSA + CJ-TELEPORT'],
+  ['CORPORATIVO Teleport', 113, 3, 'HC-TELEPORT + AF-TELEPORT'],
+  ['GEOCYCLE Barrancabermeja', 11, 0, 'HC-BARRANCABERMEJA'],
+  ['GEOCYCLE Nobsa', 17, 30, 'AF-NOBSA'],
+  ['RMX Planta Bello', 32, 10, 'HC-BELLO'],
+  ['RMX Plantas Valle', 45, 13, 'HC-PALMIRA + HC-CALI'],
+  ['RMX Planta Chía', 44, 10, 'HC-CHIA'],
+  ['RMX Plantas Boyaca', 27, 8, 'HC-NOBSA CONCRETO + HC-TUNJA'],
+  ['RMX Planta Puente Aranda', 203, 27, 'HC-PUENTE ARANDA'],
+  ['RMX Planta Sibaté', 12, 7, 'HC-SIBATE'],
+  ['TQC Tocancipá', 52, 3, 'HC-TQC']
 ];
 var ENC_POBLACION = ['Planta', 'Empleados Holcim (maestro)', 'Contratistas (opcional)', 'Divisiones del maestro (columna X)'];
 var EMPLEADO = 'Empleado(a) Holcim', CONTRATISTA = 'Contratista Holcim';
@@ -201,7 +202,7 @@ function poblacion_(libro) {
   if (!h) {
     h = libro.insertSheet(HOJA_POBLACION);
     h.getRange(1, 1, 1, ENC_POBLACION.length).setValues([ENC_POBLACION]).setFontWeight('bold');
-    h.getRange(2, 1, POBLACION_INICIAL.length, 4).setValues(POBLACION_INICIAL.map(function (p) { return [p[0], p[1], '', p[2]]; }));
+    h.getRange(2, 1, POBLACION_INICIAL.length, 4).setValues(POBLACION_INICIAL);
     h.setFrozenRows(1);
   }
   var n = h.getLastRow();
