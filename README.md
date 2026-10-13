@@ -107,6 +107,21 @@ Agrega al final de la hoja que tenga las columnas del Form (por ejemplo `Form_Re
 que todavía no estén, y lo mismo con los reportes. No borra ni cambia nada, no repite filas y no se
 publica. `diagnosticarPermisos` (en `Codigo.gs`) dice cuál de los dos casos es.
 
+## Reporte de participación (pestaña «Reporte», con usuario)
+
+Botón **Reporte** en la cabecera, o la dirección terminada en `#reporte`. Pide usuario y contraseña y
+muestra el cumplimiento: empleados Holcim que respondieron frente a la población del maestro de
+personal, en total y por planta, con lo que falta y las respuestas de contratistas. No toca la encuesta.
+
+- **Usuario y contraseña**: no van en el código (el repositorio es público). En el Apps Script:
+  ⚙️ Configuración del proyecto → **Propiedades de la secuencia de comandos** → `REPORTE_USUARIO` y
+  `REPORTE_CLAVE`. La sesión dura 6 horas desde el último uso.
+- **Población**: la hoja «Población» del Sheet de respuestas se crea sola la primera vez, con los
+  conteos del maestro de personal (columna X, por cédula, con externos y aprendices; Transcem y
+  HC-MEDELLIN no aplican; AF-TELEPORT va con CORPORATIVO Teleport). Se edita ahí. La columna de
+  contratistas es opcional.
+- El servidor nunca envía filas de respuestas, solo totales.
+
 ## Puesta en marcha
 
 1. Suba `plantilla/Encuesta_Cultura_HSE_2026_Respuestas.xlsx` a Drive y ábralo con Google Sheets

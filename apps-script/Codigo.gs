@@ -91,12 +91,126 @@ function doPost(e) {
   var resultado;
   try {
     var datos = JSON.parse(e.postData.contents);
-    resultado = datos && datos.tipo === 'reporte' ? registrarReporte(datos) : registrarRespuesta(datos);
+    resultado = datos && datos.tipo === 'consulta' ? consultarReporte(datos)
+      : datos && datos.tipo === 'reporte' ? registrarReporte(datos)
+      : registrarRespuesta(datos);
   } catch (err) {
     resultado = { ok: false, error: String(err && err.message || err) };
   }
   return ContentService.createTextOutput(JSON.stringify(resultado))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ---------------------------------------------------------------------------
+// Reporte de participación (pestaña «Reporte» de la página, con usuario y clave)
+// ---------------------------------------------------------------------------
+//
+// El usuario y la clave NO van en el código (el repositorio es público): van en
+// Configuración del proyecto → Propiedades de la secuencia de comandos:
+//   REPORTE_USUARIO   y   REPORTE_CLAVE
+// Al entrar, el servidor da una llave de sesión que dura 6 horas desde el último uso.
+// Nunca se envían filas de respuestas: solo totales por planta.
+
+var HOJA_POBLACION = 'Población';
+// Personas activas del maestro de personal (columna X «División de personal»),
+// contadas por cédula y con externos y aprendices. No aplican: Transcem (TR-) ni
+// HC-MEDELLIN. Es solo el punto de partida: se edita en la hoja «Población».
+var POBLACION_INICIAL = [
+  ['AGG Planta Mondoñedo', 30, 'HC-MONDOÑEDO'],
+  ['CEM Planta Nobsa', 265, 'HC-NOBSA CEMENTO'],
+  ['CORPORATIVO Fundación Holcim', 14, 'CJ-NOBSA + CJ-TELEPORT'],
+  ['CORPORATIVO Teleport', 113, 'HC-TELEPORT + AF-TELEPORT'],
+  ['GEOCYCLE Barrancabermeja', 11, 'HC-BARRANCABERMEJA'],
+  ['GEOCYCLE Nobsa', 17, 'AF-NOBSA'],
+  ['RMX Planta Bello', 32, 'HC-BELLO'],
+  ['RMX Plantas Valle', 45, 'HC-PALMIRA + HC-CALI'],
+  ['RMX Planta Chía', 44, 'HC-CHIA'],
+  ['RMX Plantas Boyaca', 27, 'HC-NOBSA CONCRETO + HC-TUNJA'],
+  ['RMX Planta Puente Aranda', 203, 'HC-PUENTE ARANDA'],
+  ['RMX Planta Sibaté', 12, 'HC-SIBATE'],
+  ['TQC Tocancipá', 52, 'HC-TQC']
+];
+var ENC_POBLACION = ['Planta', 'Empleados Holcim (maestro)', 'Contratistas (opcional)', 'Divisiones del maestro (columna X)'];
+var EMPLEADO = 'Empleado(a) Holcim', CONTRATISTA = 'Contratista Holcim';
+
+/** La página pide el reporte: { usuario, clave } la primera vez, después { token }. */
+function consultarReporte(datos) {
+  var d = datos || {};
+  var cache = CacheService.getScriptCache();
+  var token = String(d.token || '');
+  if (!token || !cache.get('REP|' + token)) {
+    if (d.token && !d.usuario) throw new Error('La sesión venció. Vuelva a entrar.');
+    var props = PropertiesService.getScriptProperties();
+    var usuario = props.getProperty('REPORTE_USUARIO'), clave = props.getProperty('REPORTE_CLAVE');
+    if (!usuario || !clave) {
+      throw new Error('El reporte no está configurado: faltan REPORTE_USUARIO y REPORTE_CLAVE en las propiedades del script.');
+    }
+    if (String(d.usuario || '').trim().toLowerCase() !== usuario.trim().toLowerCase() || String(d.clave || '') !== clave) {
+      Utilities.sleep(1200);   // frena a quien pruebe claves al azar
+      throw new Error('Usuario o contraseña incorrectos.');
+    }
+    token = Utilities.getUuid();
+  }
+  cache.put('REP|' + token, '1', 21600);
+  return { ok: true, token: token, reporte: armarReporte_() };
+}
+
+function armarReporte_() {
+  var libro = libro_();
+  var hoja = hoja_();
+  var datos = hoja.getDataRange().getValues();
+  var enc = (datos[0] || []).map(clave_);
+  var col = function (i) { return enc.indexOf(clave_(ENCABEZADOS[i])); };
+  var cF = col(0), cP = col(1), cT = col(2);
+
+  var pob = poblacion_(libro);
+  var porPlanta = {};
+  pob.forEach(function (p) { porPlanta[clave_(p.planta)] = { planta: p.planta, poblacion: p.empleados, poblacionContratistas: p.contratistas, empleados: 0, contratistas: 0 }; });
+  var otras = {}, ultima = null, total = 0;
+
+  for (var r = 1; r < datos.length; r++) {
+    var f = datos[r];
+    var planta = String(f[cP] || '').trim(), tipo = String(f[cT] || '').trim();
+    if (!planta && !tipo) continue;
+    total++;
+    var fecha = f[cF];
+    if (fecha instanceof Date && (!ultima || fecha > ultima)) ultima = fecha;
+    var fila = porPlanta[clave_(planta)];
+    if (!fila) fila = otras[planta] = otras[planta] || { planta: planta || '(sin planta)', empleados: 0, contratistas: 0 };
+    if (tipo === EMPLEADO) fila.empleados++; else if (tipo === CONTRATISTA) fila.contratistas++;
+  }
+
+  var plantas = Object.keys(porPlanta).map(function (k) { return porPlanta[k]; });
+  var sum = function (lista, campo) { return lista.reduce(function (a, x) { return a + (Number(x[campo]) || 0); }, 0); };
+  return {
+    generado: new Date().toISOString(),
+    ultima: ultima ? ultima.toISOString() : '',
+    total: total,
+    empleados: sum(plantas, 'empleados'),
+    contratistas: sum(plantas, 'contratistas') + sum(Object.keys(otras).map(function (k) { return otras[k]; }), 'contratistas'),
+    poblacion: sum(plantas, 'poblacion'),
+    plantas: plantas,
+    otras: Object.keys(otras).map(function (k) { return otras[k]; }),
+    notaPoblacion: 'Población: personas activas del maestro de personal (columna X), por cédula, con externos y aprendices. No aplican Transcem ni HC-MEDELLIN.'
+  };
+}
+
+// La hoja «Población»: si no existe, se crea con los conteos iniciales.
+function poblacion_(libro) {
+  var h = libro.getSheetByName(HOJA_POBLACION);
+  if (!h) {
+    h = libro.insertSheet(HOJA_POBLACION);
+    h.getRange(1, 1, 1, ENC_POBLACION.length).setValues([ENC_POBLACION]).setFontWeight('bold');
+    h.getRange(2, 1, POBLACION_INICIAL.length, 4).setValues(POBLACION_INICIAL.map(function (p) { return [p[0], p[1], '', p[2]]; }));
+    h.setFrozenRows(1);
+  }
+  var n = h.getLastRow();
+  if (n < 2) return [];
+  return h.getRange(2, 1, n - 1, 3).getValues()
+    .filter(function (f) { return String(f[0]).trim(); })
+    .map(function (f) {
+      return { planta: String(f[0]).trim(), empleados: Number(f[1]) || 0, contratistas: f[2] === '' ? null : Number(f[2]) || 0 };
+    });
 }
 
 /** Recibe { respuestas: { "<encabezado>": valor, ... } } y agrega una fila. */
