@@ -398,7 +398,7 @@
   .rep-tabla tr:last-child td{border-bottom:none}
   .rep-tabla tbody tr:hover td{background:var(--surface-2)}
   .rep-tabla td.cump{width:34%;min-width:200px}
-  .rep-tabla td.pl{white-space:nowrap;font-weight:600}
+  .rep-tabla td.pl{font-weight:600;min-width:170px}
   .cump .fila{display:flex;align-items:center;gap:10px}
   .cump .meter{flex:1;cursor:default}
   .cump b{min-width:52px;text-align:right;font-variant-numeric:tabular-nums}
@@ -1294,22 +1294,40 @@ function fmtFecha(iso) {
   return new Date(iso).toLocaleString("es-CO", { timeZone: "America/Bogota", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 }
 
-// Dos vistas separadas, sin mezclar: empleados Holcim (frente al maestro) y
-// contratistas (frente a la columna C de la hoja «Población»).
+// Tres vistas: empleados Holcim (frente al maestro), contratistas (frente a sus
+// cantidades por planta) y general (los dos juntos). Las dos primeras no se mezclan.
 var VISTAS = {
   emp: { boton: "Empleados Holcim", nombre: "empleados Holcim", titulo: "Cumplimiento empleados Holcim",
          pob: "Población empleados", resp: "Empleados que respondieron",
          sub: "Empleados Holcim que respondieron frente a la población del maestro de personal" },
   con: { boton: "Contratistas", nombre: "contratistas", titulo: "Cumplimiento contratistas",
          pob: "Población contratistas", resp: "Contratistas que respondieron",
-         sub: "Contratistas que respondieron frente a las cantidades por planta de la hoja «Población»" }
+         sub: "Contratistas que respondieron frente a las cantidades de contratistas por planta" },
+  gen: { boton: "General", nombre: "personas (empleados + contratistas)", titulo: "Cumplimiento general",
+         pob: "Población total", resp: "Respondieron (empleados + contratistas)",
+         sub: "Empleados y contratistas que respondieron frente a la población total de cada planta" }
 };
 
+// Contratistas por planta (dadas por H&S, sumadas por planta de la encuesta; Transcem no
+// aplica). Si la columna C de la hoja «Población» tiene una cifra, esa manda.
+var CONTRATISTAS_POR_PLANTA = {
+  "AGG Planta Mondoñedo": 70, "CEM Planta Nobsa": 110, "CORPORATIVO Fundación Holcim": 15, "CORPORATIVO Teleport": 3,
+  "GEOCYCLE Barrancabermeja": 0, "GEOCYCLE Nobsa": 30, "RMX Planta Bello": 10, "RMX Plantas Valle": 13, "RMX Planta Chía": 10,
+  "RMX Plantas Boyaca": 8, "RMX Planta Puente Aranda": 27, "RMX Planta Sibaté": 7, "TQC Tocancipá": 3
+};
+
+function poblacionContratistas(p) {
+  if (p.poblacionContratistas !== null && p.poblacionContratistas !== undefined) return p.poblacionContratistas;
+  return CONTRATISTAS_POR_PLANTA.hasOwnProperty(p.planta) ? CONTRATISTAS_POR_PLANTA[p.planta] : null;
+}
+
 function filaVista(p) {
-  var emp = repVista === "emp";
-  var pob = emp ? p.poblacion : (p.poblacionContratistas || 0);
-  var resp = emp ? p.empleados : p.contratistas;
-  return { planta: p.planta, pob: pob, resp: resp, p: pob ? resp / pob : null, falta: Math.max(pob - resp, 0) };
+  var emp = repVista === "emp", gen = repVista === "gen";
+  var pc = poblacionContratistas(p);
+  var pob = emp ? p.poblacion : gen ? p.poblacion + (pc || 0) : (pc || 0);
+  // En el general, sin cantidad de contratistas sus respuestas no se suman (inflarían el %)
+  var resp = emp ? p.empleados : gen ? p.empleados + (pc === null ? 0 : p.contratistas) : p.contratistas;
+  return { planta: p.planta, pob: pob, resp: resp, p: pob ? resp / pob : null, falta: Math.max(pob - resp, 0), sinCifra: !emp && pc === null };
 }
 
 function pintarReporte() {
@@ -1325,10 +1343,11 @@ function pintarReporte() {
   var suma = function (campo) { return filas.reduce(function (a, f) { return a + (f[campo] || 0); }, 0); };
   var pob = suma("pob"), resp = suma("resp"), global = pob ? resp / pob : null;
   // Respuestas de plantas que no están en «Población» (solo cuentan en el total sin filtro)
-  var otras = repPlanta ? 0 : r.otras.reduce(function (a, o) { return a + (emp ? o.empleados : o.contratistas); }, 0);
+  var deOtra = function (o) { return repVista === "emp" ? o.empleados : repVista === "con" ? o.contratistas : o.empleados + o.contratistas; };
+  var otras = repPlanta ? 0 : r.otras.reduce(function (a, o) { return a + deOtra(o); }, 0);
   var conPob = filas.filter(function (f) { return f.pob > 0; });
   var completas = conPob.filter(function (f) { return f.p >= 1; }).length;
-  var faltaCifra = !emp && filas.some(function (f) { return !f.pob; });
+  var faltaCifra = filas.some(function (f) { return f.sinCifra; });
   var meter = function (x, tip) {
     return '<div class="meter" data-tip="' + esc(tip) + '"><i style="width:' + Math.min(100, Math.round((x || 0) * 100)) + '%"></i></div>';
   };
@@ -1341,7 +1360,7 @@ function pintarReporte() {
     '<div class="rep-filtros">' +
       '<label class="rep-orden">Planta <select id="selPlanta">' + opcPlantas + "</select></label>" +
       '<div class="seg-vista" role="group" aria-label="Qué población mirar">' +
-        ["emp", "con"].map(function (k) { return '<button type="button" data-vista="' + k + '" aria-pressed="' + (k === repVista) + '">' + VISTAS[k].boton + "</button>"; }).join("") +
+        ["emp", "con", "gen"].map(function (k) { return '<button type="button" data-vista="' + k + '" aria-pressed="' + (k === repVista) + '">' + VISTAS[k].boton + "</button>"; }).join("") +
       "</div></div>" +
     (faltaCifra ? '<p class="rep-aviso">Falta la cantidad de contratistas de ' + (filas.length === 1 ? "esta planta" : "algunas plantas") +
       ': escríbala en la columna C de la hoja «Población» y pulse Actualizar. Mientras tanto se ven las respuestas, sin porcentaje.</p>' : "") +
@@ -1365,8 +1384,8 @@ function pintarReporte() {
     (filas.length > 1 ? '<tfoot><tr><td class="pl">Total</td><td class="num" data-l="' + v.pob + '">' + (pob || "—") + '</td><td class="num" data-l="' + v.resp + '">' + resp + '</td><td class="cump"><div class="fila">' +
       meter(global, "Total: " + fmtPct(global)) + "<b>" + fmtPct(global) + '</b></div></td><td class="num" data-l="Faltan">' + (pob ? Math.max(pob - resp, 0) : "—") + "</td></tr></tfoot>" : "") +
     "</table></div>" +
-    (otras ? '<p class="rep-nota">⚠ ' + v.resp + ' con una planta que no está en la hoja «Población»: ' + r.otras.filter(function (o) { return emp ? o.empleados : o.contratistas; }).map(function (o) { return esc(o.planta) + " (" + (emp ? o.empleados : o.contratistas) + ")"; }).join(", ") + ".</p>" : "") +
-    '<p class="rep-nota">' + (emp ? esc(r.notaPoblacion) : "Contratistas: cantidades por planta de la columna C de la hoja «Población» (Transcem no aplica).") + " Las cifras se cambian en la hoja «Población» del Sheet de respuestas.</p>";
+    (otras ? '<p class="rep-nota">⚠ ' + v.resp + ' con una planta que no está en la hoja «Población»: ' + r.otras.filter(deOtra).map(function (o) { return esc(o.planta) + " (" + deOtra(o) + ")"; }).join(", ") + ".</p>" : "") +
+    '<p class="rep-nota">' + (emp ? esc(r.notaPoblacion) : repVista === "gen" ? esc(r.notaPoblacion) + " Contratistas: cantidades por planta entregadas por H&S (Transcem no aplica)." : "Contratistas: cantidades por planta entregadas por H&S (Transcem no aplica). Si se escribe una cifra en la columna C de la hoja «Población», esa reemplaza a la de aquí. Barrancabermeja no tiene contratistas registrados.") + " Las cifras se cambian en la hoja «Población» del Sheet de respuestas.</p>";
   $("repPanel").innerHTML = html;
   if ($("selOrden")) $("selOrden").value = repOrden;
 }
