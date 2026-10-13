@@ -11,6 +11,11 @@ cae como una fila nueva en la misma hoja del Form (`Respuestas de formulario 1`)
 46 columnas y el mismo orden, así que los informes y tablas dinámicas que ya leen esa hoja siguen
 funcionando.
 
+> **El QR es fijo y ya está publicado.** Lleva siempre a esa dirección. No se regenera, no se
+> renombra el repositorio y no se cambia el origen de GitHub Pages (rama `claude/vigilant-rubin-gnovek`,
+> carpeta raíz). Los cambios de la encuesta se publican en esa rama y el QR muestra la versión nueva
+> sin cambiar. Detalle en `CLAUDE.md`.
+
 ## Contenido
 
 - `index.html` — la encuesta completa en un solo archivo (estilos, logo y JavaScript adentro).
