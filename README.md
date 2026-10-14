@@ -121,6 +121,12 @@ personal, en total y por planta, con lo que falta y las respuestas de contratist
   HC-MEDELLIN no aplican; AF-TELEPORT va con CORPORATIVO Teleport). Se edita ahí. La columna de
   contratistas es opcional.
 - El servidor nunca envía filas de respuestas, solo totales.
+- **Pantalla**: en computador cabe entera en la ventana, sin desplazar. A la izquierda se elige la
+  población (Empleados Holcim, Contratistas o General) y las plantas (una, varias, un negocio
+  completo como RMX, o todas). A la derecha, la tabla por planta.
+- **Generar informe**: muestra una hoja con las plantas elegidas y, para cada una, empleados,
+  contratistas y general. Desde ahí se imprime o se guarda en PDF (hoja horizontal), o se descarga
+  a Excel (`.csv` separado por punto y coma). Solo cifras por planta, sin datos de personas.
 
 ## Puesta en marcha
 

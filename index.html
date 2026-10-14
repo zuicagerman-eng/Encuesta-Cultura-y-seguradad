@@ -435,6 +435,157 @@
     .rep-tabla tfoot td{border:none}
   }
 
+  /* Reporte en una sola vista: barra arriba, filtros y cifras a la izquierda, plantas a la derecha */
+  .rp-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:10px 14px}
+  .rp-tit{flex:1;min-width:200px}
+  .rep .rp-tit h2{font-size:20px;line-height:1.2}
+  .rp-tit .sub{margin-top:2px}
+  .rp-acc{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .rp-bar .ghost{color:var(--text);border-color:var(--line);background:var(--surface);padding:8px 14px}
+  .rp-bar .rp-ic{width:40px;height:40px;padding:0;justify-content:center;font-size:18px}
+  .rp-bar .big.mini{margin-top:0;padding:10px 18px}
+  .rp-grid{display:grid;grid-template-columns:350px minmax(0,1fr);gap:14px;margin-top:14px}
+  .rp-lado{display:flex;flex-direction:column;gap:14px;min-width:0}
+  .rp-card{background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:14px 16px}
+  .rp-lbl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-soft);margin-bottom:6px}
+  .rp-filtros .seg-vista{display:grid;grid-template-columns:auto auto auto;width:100%}
+  .rp-filtros .seg-vista button{padding:8px 6px;font-size:13px}
+  .pl-sel{position:relative}
+  .rp-filtros .pl-sel{margin-top:4px}
+  .rp-filtros .rp-lbl+.pl-sel,.rp-filtros .seg-vista+.rp-lbl{margin-top:12px}
+  .pl-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border-radius:10px;border:2px solid var(--line);background:var(--field);color:var(--text);font-weight:700;font-size:14px;cursor:pointer;text-align:left}
+  .pl-btn:hover,.pl-btn[aria-expanded="true"]{border-color:var(--meter)}
+  .pl-btn span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pl-btn svg{flex:none;width:16px;height:16px;transition:transform .2s}
+  .pl-btn[aria-expanded="true"] svg{transform:rotate(180deg)}
+  .pl-menu{position:absolute;z-index:40;top:calc(100% + 6px);left:0;width:min(480px,calc(100vw - 32px));background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.3);padding:12px;columns:2;column-gap:12px}
+  .pl-rap{column-span:all;display:flex;gap:8px;align-items:center;margin-bottom:8px;font-size:12.5px;color:var(--text-soft)}
+  .pl-rap button{border:none;background:var(--chip);color:var(--text);font-weight:700;font-size:12.5px;border-radius:999px;padding:6px 12px;cursor:pointer}
+  .pl-rap button:hover{background:var(--sel-bg)}
+  .pl-rap span{margin-left:auto}
+  .pl-grupo{break-inside:avoid;margin-bottom:4px}
+  .pl-menu label{display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:8px;font-size:13.5px;color:var(--text);cursor:pointer;line-height:1.25}
+  .pl-menu label:hover{background:var(--surface-2)}
+  .pl-menu .pl-g{font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-soft)}
+  .pl-grupo .pl-o{padding-left:24px}
+  .pl-menu input{flex:none;width:16px;height:16px;accent-color:var(--meter);cursor:pointer}
+  .kpi-hero{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;flex:1}
+  .rp-card .k-lbl{font-size:12.5px;font-weight:700;color:var(--text-soft);text-transform:uppercase;letter-spacing:.04em}
+  .rp-card .k-sub{font-size:13px;color:var(--text-soft)}
+  .ring-w{--ring:clamp(120px,22vh,210px);position:relative;width:var(--ring);height:var(--ring)}
+  .ring{display:block;width:100%;height:100%}
+  .ring circle{fill:none;stroke-width:11}
+  .ring .tr{stroke:var(--meter-track)}
+  .ring .va{stroke:var(--meter);stroke-linecap:round;transition:stroke-dashoffset .8s ease}
+  .ring-v{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:calc(var(--ring) * .21);font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+  .ring-v small{font-size:.55em;margin-left:.12em;color:var(--text-soft)}
+  .kl{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}
+  .kl:first-child{padding-top:0}
+  .kl:last-child{border-bottom:none;padding-bottom:0}
+  .kl span{font-size:13.5px;color:var(--text-soft);font-weight:600}
+  .kl small{display:block;font-size:12px;font-weight:500}
+  .kl b{font-size:24px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .rp-tcard{display:flex;flex-direction:column;min-width:0;padding:14px 0 12px}
+  .rp-tcab{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:0 16px 10px}
+  .rep .rp-tcab h3{font-size:18px;color:var(--hero)}
+  .rp-tcard .rep-tabla{margin:0;box-shadow:none;border-radius:0;background:transparent}
+  .rp-tcard .rep-tabla table{min-width:560px}
+  .rp-tcard .rep-tabla th{position:sticky;top:0;z-index:1;background:var(--surface);padding:9px 14px}
+  .rp-tcard .rep-tabla td.cump{width:32%;min-width:150px}
+  .rp-tcard .rep-tabla tfoot td{position:sticky;bottom:0;background:var(--surface)}
+  .rp-tcard .rep-aviso{margin:0 16px 10px}
+  .rp-tcard .rep-nota{margin:10px 16px 0}
+  .rep-tabla .etq{margin:0 0 0 6px;vertical-align:1px}
+  .rep-tabla tr.vacio td{text-align:center;color:var(--text-soft);padding:40px 14px}
+  @media (min-width:1000px) and (min-height:560px){
+    body.modo-reporte main{max-width:1280px;padding:14px 20px}
+    body.modo-reporte .hbar{max-width:1280px}
+    .rep.rp{height:var(--rp-alto,auto);display:flex;flex-direction:column}
+    .rp .rp-grid{flex:1;min-height:0}
+    .rp-tcard{min-height:0}
+    .rp-tcard .rep-tabla{flex:1;min-height:0;overflow:auto}
+    .rp-tcard .rep-tabla td{padding-top:var(--fila-pad,6px);padding-bottom:var(--fila-pad,6px)}
+    .rp-tcard.apretado .rep-tabla td{font-size:13px}
+    .rp-tcard.apretado .rep-tabla th{padding-top:6px;padding-bottom:6px}
+    .rp-tcard.apretado .rp-tcab .sub{display:none}
+    .rp-tcard .rep-nota{margin-top:auto;padding-top:8px}
+    .rp-tcard .rep-nota+.rep-nota{margin-top:4px;padding-top:0}
+    .rp-tcard .rep-tabla td.pl .nom{white-space:nowrap}
+    .rp-tcard .rep-tabla th,.rp-tcard .rep-tabla td{padding-left:12px;padding-right:12px}
+    .rp-tcard .rep-nota{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;cursor:help}
+  }
+  /* Pantallas bajas (portátil de 1366 × 768): anillo al lado del título y cifras más juntas */
+  @media (min-width:1000px) and (max-height:820px){
+    .kpi-hero{flex-direction:row;justify-content:flex-start;gap:16px;text-align:left}
+    .ring-w{--ring:clamp(108px,17vh,150px)}
+    .kl{padding:5px 0}
+    .kl b{font-size:22px}
+    .rp-filtros.rp-card{padding:12px 14px}
+    .rp-filtros .rp-lbl+.pl-sel,.rp-filtros .seg-vista+.rp-lbl{margin-top:10px}
+  }
+  @media (max-width:1199px){.rp-grid{grid-template-columns:316px minmax(0,1fr)}.rp-filtros .seg-vista button{font-size:12.5px;padding:8px 4px}}
+  @media (max-width:999px){
+    .rp-grid{grid-template-columns:1fr}
+    .kpi-hero{flex-direction:row;justify-content:center;gap:18px;text-align:left}
+    .ring-w{--ring:128px}
+  }
+  @media (max-width:700px){
+    .rp-tcard{background:transparent;box-shadow:none;padding:0}
+    .rp-tcab{padding:4px 2px 10px}
+    .rp-tcard .rep-tabla th{position:static}
+    .rp-tcard .rep-tabla table{min-width:0}
+    .rp-tcard .rep-tabla tfoot td{position:static;background:transparent}
+    .rp-tcard .rep-aviso,.rp-tcard .rep-nota{margin-left:0;margin-right:0}
+    .rp-bar .big.mini{flex:1;justify-content:center}
+    .pl-menu{columns:1;max-height:60vh;overflow:auto}
+  }
+
+  /* Informe para imprimir o guardar en PDF (hoja blanca, igual en tema claro y oscuro) */
+  .informe{position:fixed;inset:0;z-index:95;background:rgba(4,14,30,.74);overflow:auto;padding:0 16px 30px}
+  .inf-bar{position:sticky;top:0;z-index:1;display:flex;flex-wrap:wrap;gap:10px;align-items:center;max-width:1100px;margin:0 auto;padding:14px 0}
+  .inf-bar b{color:#fff;margin-right:auto;font-size:15px}
+  .inf-bar .big.mini{margin-top:0}
+  .inf-bar .ghost{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.35)}
+  .inf-hoja{max-width:1100px;margin:0 auto;background:#fff;color:#0b2545;border-radius:6px;box-shadow:0 20px 50px rgba(0,0,0,.4);padding:30px 34px;font-size:12.5px;line-height:1.4}
+  .inf-hoja *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .ih{display:flex;align-items:center;gap:18px;border-bottom:3px solid #1877c4;padding-bottom:12px}
+  .ih img{height:32px}
+  .ih h1{font-size:21px;color:#0b2545;line-height:1.2}
+  .ih p{color:#5b6b82;font-size:12px;margin-top:2px}
+  .ih .if{margin-left:auto;text-align:right;color:#5b6b82;font-size:11.5px;line-height:1.5;white-space:nowrap}
+  .ip{margin:12px 0 10px;color:#33465f}
+  .iks{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+  .ik{border:1px solid #d7e0ec;border-radius:10px;padding:9px 14px}
+  .ik.g{background:#f1f8e7;border-color:#b9dc8c}
+  .ik .l{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#5b6b82}
+  .ik .v{font-size:25px;font-weight:800;line-height:1.15}
+  .ik .s{font-size:11.5px;color:#5b6b82}
+  .it{width:100%;border-collapse:collapse;font-size:12px}
+  .it th{background:#0b2545;color:#fff;font-size:10px;text-transform:uppercase;letter-spacing:.03em;padding:5px 7px;text-align:center;border:1px solid #0b2545;font-weight:700}
+  .it thead tr+tr th{background:#24497a;border-color:#24497a}
+  .it td{padding:5px 7px;border-bottom:1px solid #e3e9f2;font-variant-numeric:tabular-nums}
+  .it td.n{text-align:right}
+  .it tbody td:first-child,.it tfoot td:first-child{white-space:nowrap;font-weight:600}
+  .it td.pc{white-space:nowrap;text-align:right;font-weight:700}
+  .it .b{border-left:2px solid #c9d5e6}
+  .it .bar{display:inline-block;position:relative;width:40px;height:6px;border-radius:3px;background:#e3eed6;margin-right:6px;vertical-align:middle;overflow:hidden}
+  .it .bar i{position:absolute;inset:0 auto 0 0;background:#4f9a16}
+  .it tbody tr:nth-child(even) td{background:#f6f9fd}
+  .it tfoot td{font-weight:800;border-top:2px solid #0b2545;background:#eef3f9}
+  .in{margin-top:12px;font-size:10.5px;color:#5b6b82;line-height:1.5}
+  @media (max-width:700px){.inf-hoja{padding:18px 14px;overflow-x:auto}.ih{flex-wrap:wrap}.ih .if{margin-left:0;text-align:left}.iks{grid-template-columns:1fr}}
+  @media print{
+    @page{size:A4 landscape;margin:11mm}
+    body.imprimiendo{background:#fff!important}
+    body.imprimiendo>*:not(#informe){display:none!important}
+    body.imprimiendo .informe{position:static;background:none;overflow:visible;padding:0}
+    body.imprimiendo .inf-bar{display:none}
+    body.imprimiendo .inf-hoja{max-width:none;box-shadow:none;border-radius:0;padding:0}
+    .it tr{break-inside:avoid}
+  }
+
+  #s-reporte.dentro .rep-top{display:none}
+
   /* Confeti al terminar */
   .confeti{position:fixed;inset:0;pointer-events:none;z-index:70;overflow:hidden}
   .confeti i{position:absolute;left:var(--x0);top:var(--y0);width:9px;height:14px;border-radius:2px;background:var(--c);animation:cae var(--t) cubic-bezier(.2,.6,.4,1) var(--d) forwards;opacity:0}
@@ -576,10 +727,19 @@
       <p class="rl-err" id="loginError" role="alert"></p>
       <button class="big mini" type="submit" id="btnEntrar">Entrar <span>→</span></button>
     </form>
-    <div class="rep" id="repPanel" hidden></div>
+    <div class="rep rp" id="repPanel" hidden></div>
   </section>
 </main>
 <div class="rep-tip" id="repTip" role="tooltip" hidden></div>
+<div class="informe" id="informe" role="dialog" aria-modal="true" aria-label="Informe de participación" hidden>
+  <div class="inf-bar">
+    <b>Vista previa del informe</b>
+    <button class="big mini" type="button" id="btnImprimir">🖨 Imprimir o guardar en PDF</button>
+    <button class="ghost" type="button" id="btnExcel">⬇ Descargar Excel</button>
+    <button class="ghost" type="button" id="btnCerrarInf">Cerrar</button>
+  </div>
+  <div class="inf-hoja" id="infHoja"></div>
+</div>
 
 <nav class="nav" id="nav" hidden>
   <div class="navin">
@@ -1231,7 +1391,7 @@ function copiarEnlace(btn) {
 /* ---------- Reporte de participación (con usuario) ---------- */
 
 var CLAVE_TOKEN = "encuesta-cultura-reporte";
-var repDatos = null, repPasoAntes = 0, repOrden = "menor", repVista = "emp", repPlanta = "";
+var repDatos = null, repPasoAntes = 0, repOrden = "menor", repVista = "emp", repSel = null, repMenu = false;
 
 function abrirReporte() {
   if (document.body.classList.contains("modo-reporte")) return;
@@ -1256,6 +1416,7 @@ function cerrarReporte() {
 }
 
 function mostrarLogin(msg) {
+  $("s-reporte").classList.remove("dentro");
   $("formLogin").hidden = false;
   $("repPanel").hidden = true;
   $("loginError").textContent = msg || "";
@@ -1321,8 +1482,9 @@ function poblacionContratistas(p) {
   return CONTRATISTAS_POR_PLANTA.hasOwnProperty(p.planta) ? CONTRATISTAS_POR_PLANTA[p.planta] : null;
 }
 
-function filaVista(p) {
-  var emp = repVista === "emp", gen = repVista === "gen";
+function filaVista(p, vista) {
+  vista = vista || repVista;
+  var emp = vista === "emp", gen = vista === "gen";
   var pc = poblacionContratistas(p);
   var pob = emp ? p.poblacion : gen ? p.poblacion + (pc || 0) : (pc || 0);
   // En el general, sin cantidad de contratistas sus respuestas no se suman (inflarían el %)
@@ -1330,10 +1492,73 @@ function filaVista(p) {
   return { planta: p.planta, pob: pob, resp: resp, p: pob ? resp / pob : null, falta: Math.max(pob - resp, 0), sinCifra: !emp && pc === null };
 }
 
+// Plantas elegidas: repSel null = todas; si no, un objeto con las elegidas
+function nombresPlantas() { return repDatos.plantas.map(function (p) { return p.planta; }).sort(function (a, b) { return a.localeCompare(b); }); }
+function plantaElegida(n) { return !repSel || !!repSel[n]; }
+function grupoPlanta(n) { return n.split(" ")[0]; }
+function elegirPlantas(nombres, si) {
+  if (!repSel) { repSel = {}; nombresPlantas().forEach(function (n) { repSel[n] = true; }); }
+  nombres.forEach(function (n) { if (si) repSel[n] = true; else delete repSel[n]; });
+  if (nombresPlantas().every(function (n) { return repSel[n]; })) repSel = null;
+}
+function textoPlantas() {
+  var todas = nombresPlantas(), el = todas.filter(plantaElegida);
+  if (el.length === todas.length) return "Todas las plantas (" + todas.length + ")";
+  if (!el.length) return "Ninguna planta";
+  if (el.length === 1) return el[0];
+  return el.length + " de " + todas.length + " plantas";
+}
+
+// Lista para marcar varias plantas, agrupadas por negocio (AGG, CEM, RMX…)
+function menuPlantas() {
+  var grupos = {}, orden = [], todas = nombresPlantas();
+  todas.forEach(function (n) { var g = grupoPlanta(n); if (!grupos[g]) { grupos[g] = []; orden.push(g); } grupos[g].push(n); });
+  var opcion = function (n, corto) {
+    return '<label class="pl-o"><input type="checkbox" data-planta="' + esc(n) + '"' + (plantaElegida(n) ? " checked" : "") + "> " + esc(corto ? n.slice(n.indexOf(" ") + 1) : n) + "</label>";
+  };
+  return '<div class="pl-menu" id="plMenu" role="group" aria-label="Elegir plantas"' + (repMenu ? "" : " hidden") + ">" +
+    '<div class="pl-rap"><button type="button" data-plantas="todas">Todas</button><button type="button" data-plantas="ninguna">Ninguna</button><span>' +
+      todas.filter(plantaElegida).length + " de " + todas.length + "</span></div>" +
+    orden.map(function (g) {
+      var ps = grupos[g];
+      if (ps.length === 1) return '<div class="pl-grupo">' + opcion(ps[0], false) + "</div>";
+      var n = ps.filter(plantaElegida).length;
+      return '<div class="pl-grupo"><label class="pl-g"><input type="checkbox" data-grupo="' + esc(g) + '"' + (n === ps.length ? " checked" : "") +
+        (n && n < ps.length ? ' data-mixto="1"' : "") + "> " + esc(g) + " (todas)</label>" + ps.map(function (p) { return opcion(p, true); }).join("") + "</div>";
+    }).join("") + "</div>";
+}
+
+function mostrarMenuPlantas() {
+  if (!$("plMenu")) return;
+  $("plMenu").hidden = !repMenu;
+  $("btnPlantas").setAttribute("aria-expanded", repMenu ? "true" : "false");
+}
+
+function anillo(x, tip) {
+  var c = 2 * Math.PI * 52, v = Math.min(1, x || 0);
+  return '<div class="ring-w" data-tip="' + esc(tip) + '"><svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="tr" cx="60" cy="60" r="52"/>' +
+    '<circle class="va" cx="60" cy="60" r="52" transform="rotate(-90 60 60)" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + (c * (1 - v)).toFixed(1) + '"' + (v ? "" : ' style="opacity:0"') + "/></svg>" +
+    '<div class="ring-v">' + fmtPct(x).replace(" %", "<small>%</small>") + "</div></div>";
+}
+
+function notaReporte() {
+  var c = "Contratistas: cantidades por planta entregadas por H&S (Transcem no aplica).";
+  return repVista === "emp" ? repDatos.notaPoblacion : repVista === "gen" ? repDatos.notaPoblacion + " " + c :
+    c + " Si se escribe una cifra en la columna C de la hoja «Población», esa reemplaza a la de aquí. Barrancabermeja no tiene contratistas registrados.";
+}
+
+// Para volver a poner el foco donde estaba después de repintar
+function selectorFoco() {
+  var a = document.activeElement;
+  if (!a || !$("repPanel").contains(a)) return null;
+  if (a.id) return "#" + a.id;
+  var at = ["data-planta", "data-grupo", "data-plantas", "data-vista"].filter(function (x) { return a.hasAttribute(x); })[0];
+  return at ? "[" + at + '="' + a.getAttribute(at).replace(/["\\]/g, "\\$&") + '"]' : null;
+}
+
 function pintarReporte() {
-  var r = repDatos, v = VISTAS[repVista], emp = repVista === "emp";
-  var filas = r.plantas.map(filaVista);
-  if (repPlanta) filas = filas.filter(function (f) { return f.planta === repPlanta; });
+  var r = repDatos, v = VISTAS[repVista], foco = selectorFoco();
+  var filas = r.plantas.filter(function (p) { return plantaElegida(p.planta); }).map(function (p) { return filaVista(p); });
   var orden = {
     menor: function (a, b) { return (a.p === null ? 9 : a.p) - (b.p === null ? 9 : b.p) || a.planta.localeCompare(b.planta); },
     faltan: function (a, b) { return b.falta - a.falta || a.planta.localeCompare(b.planta); },
@@ -1342,52 +1567,158 @@ function pintarReporte() {
   filas.sort(orden[repOrden]);
   var suma = function (campo) { return filas.reduce(function (a, f) { return a + (f[campo] || 0); }, 0); };
   var pob = suma("pob"), resp = suma("resp"), global = pob ? resp / pob : null;
-  // Respuestas de plantas que no están en «Población» (solo cuentan en el total sin filtro)
+  // Respuestas de plantas que no están en «Población» (solo cuentan con todas las plantas)
   var deOtra = function (o) { return repVista === "emp" ? o.empleados : repVista === "con" ? o.contratistas : o.empleados + o.contratistas; };
-  var otras = repPlanta ? 0 : r.otras.reduce(function (a, o) { return a + deOtra(o); }, 0);
+  var otras = repSel ? 0 : r.otras.reduce(function (a, o) { return a + deOtra(o); }, 0);
   var conPob = filas.filter(function (f) { return f.pob > 0; });
   var completas = conPob.filter(function (f) { return f.p >= 1; }).length;
   var faltaCifra = filas.some(function (f) { return f.sinCifra; });
   var meter = function (x, tip) {
     return '<div class="meter" data-tip="' + esc(tip) + '"><i style="width:' + Math.min(100, Math.round((x || 0) * 100)) + '%"></i></div>';
   };
-  var opcPlantas = '<option value="">Todas las plantas</option>' + r.plantas.map(function (p) { return p.planta; }).sort().map(function (n) {
-    return '<option value="' + esc(n) + '"' + (n === repPlanta ? " selected" : "") + ">" + esc(n) + "</option>";
-  }).join("");
-  var html = '<div class="rep-cab"><div><h2>Participación — Encuesta 2026</h2>' +
-    '<div class="sub">Actualizado ' + fmtFecha(r.generado) + ' · Última respuesta ' + fmtFecha(r.ultima) + '</div></div>' +
-    '<div class="rep-acc"><button class="ghost" type="button" id="btnActualizar">↻ Actualizar</button><button class="ghost" type="button" id="btnSalirRep">Salir</button></div></div>' +
-    '<div class="rep-filtros">' +
-      '<label class="rep-orden">Planta <select id="selPlanta">' + opcPlantas + "</select></label>" +
-      '<div class="seg-vista" role="group" aria-label="Qué población mirar">' +
-        ["emp", "con", "gen"].map(function (k) { return '<button type="button" data-vista="' + k + '" aria-pressed="' + (k === repVista) + '">' + VISTAS[k].boton + "</button>"; }).join("") +
-      "</div></div>" +
-    (faltaCifra ? '<p class="rep-aviso">Falta la cantidad de contratistas de ' + (filas.length === 1 ? "esta planta" : "algunas plantas") +
-      ': escríbala en la columna C de la hoja «Población» y pulse Actualizar. Mientras tanto se ven las respuestas, sin porcentaje.</p>' : "") +
-    '<div class="kpis">' +
-      '<div class="kpi hero"><div class="k-lbl">' + v.titulo + '</div><div class="k-val">' + fmtPct(global) + "</div>" +
-        meter(global, resp + " de " + pob + " " + v.nombre + " respondieron") + '<div class="k-sub">' + resp + " de " + (pob || "—") + " " + v.nombre + "</div></div>" +
-      '<div class="kpi"><div class="k-lbl">' + v.resp + '</div><div class="k-val">' + resp + '</div><div class="k-sub">' +
-        (repPlanta ? "en esta planta" : "en las plantas de la lista") + (otras ? " · +" + otras + " de otras plantas" : "") + "</div></div>" +
-      '<div class="kpi"><div class="k-lbl">Faltan por responder</div><div class="k-val">' + (pob ? Math.max(pob - resp, 0) : "—") + '</div><div class="k-sub">' + v.nombre + "</div></div>" +
-      '<div class="kpi"><div class="k-lbl">Plantas al 100 %</div><div class="k-val">' + (conPob.length ? completas + " / " + conPob.length : "—") + '</div><div class="k-sub">en ' + v.nombre + "</div></div>" +
+  var nota = notaReporte() + " Las cifras se cambian en la hoja «Población» del Sheet de respuestas.";
+  var html = '<div class="rp-bar">' +
+      '<button class="ghost rp-ic" type="button" id="btnVolverRep" title="Volver a la encuesta" aria-label="Volver a la encuesta">←</button>' +
+      '<div class="rp-tit"><h2>Participación — Encuesta 2026</h2><div class="sub">Actualizado ' + fmtFecha(r.generado) + " · Última respuesta " + fmtFecha(r.ultima) + "</div></div>" +
+      '<div class="rp-acc"><button class="big mini" type="button" id="btnInforme">📄 Generar informe</button>' +
+        '<button class="ghost rp-ic" type="button" id="btnActualizar" title="Actualizar" aria-label="Actualizar">↻</button>' +
+        '<button class="ghost" type="button" id="btnSalirRep">Salir</button></div>' +
     "</div>" +
-    '<div class="rep-cab" style="margin-top:22px"><div><h2 style="font-size:20px">' + (repPlanta ? esc(repPlanta) : "Por planta") + '</h2><div class="sub">' + v.sub + "</div></div>" +
-    (repPlanta ? "" : '<label class="rep-orden">Ordenar <select id="selOrden"><option value="menor">Menor cumplimiento primero</option><option value="faltan">Más pendientes primero</option><option value="nombre">Por nombre</option></select></label>') + "</div>" +
-    '<div class="rep-tabla"><table><thead><tr><th>Planta</th><th class="num">' + v.pob + '</th><th class="num">' + v.resp + '</th><th>Cumplimiento</th><th class="num">Faltan</th></tr></thead><tbody>' +
-    filas.map(function (f) {
-      var etq = f.p === null ? "" : f.p > 1 ? '<span class="etq av" title="Más respuestas que población: revise la cifra en la hoja «Población»">⚠ Revisar población</span>' : f.p === 1 ? '<span class="etq ok">✓ Completa</span>' : "";
-      var tip = f.planta + ": " + f.resp + " de " + (f.pob || "—") + " " + v.nombre + " (" + fmtPct(f.p) + ")" + (f.falta ? " · faltan " + f.falta : "");
-      return '<tr><td class="pl">' + esc(f.planta) + (etq ? "<br>" + etq : "") + '</td><td class="num" data-l="' + v.pob + '">' + (f.pob || "—") + '</td><td class="num" data-l="' + v.resp + '">' + f.resp + "</td>" +
-        '<td class="cump"><div class="fila">' + meter(f.p, tip) + "<b>" + fmtPct(f.p) + '</b></div></td><td class="num" data-l="Faltan">' + (f.pob ? f.falta : "—") + "</td></tr>";
-    }).join("") + "</tbody>" +
-    (filas.length > 1 ? '<tfoot><tr><td class="pl">Total</td><td class="num" data-l="' + v.pob + '">' + (pob || "—") + '</td><td class="num" data-l="' + v.resp + '">' + resp + '</td><td class="cump"><div class="fila">' +
-      meter(global, "Total: " + fmtPct(global)) + "<b>" + fmtPct(global) + '</b></div></td><td class="num" data-l="Faltan">' + (pob ? Math.max(pob - resp, 0) : "—") + "</td></tr></tfoot>" : "") +
-    "</table></div>" +
-    (otras ? '<p class="rep-nota">⚠ ' + v.resp + ' con una planta que no está en la hoja «Población»: ' + r.otras.filter(deOtra).map(function (o) { return esc(o.planta) + " (" + deOtra(o) + ")"; }).join(", ") + ".</p>" : "") +
-    '<p class="rep-nota">' + (emp ? esc(r.notaPoblacion) : repVista === "gen" ? esc(r.notaPoblacion) + " Contratistas: cantidades por planta entregadas por H&S (Transcem no aplica)." : "Contratistas: cantidades por planta entregadas por H&S (Transcem no aplica). Si se escribe una cifra en la columna C de la hoja «Población», esa reemplaza a la de aquí. Barrancabermeja no tiene contratistas registrados.") + " Las cifras se cambian en la hoja «Población» del Sheet de respuestas.</p>";
+    '<div class="rp-grid"><div class="rp-lado">' +
+      '<div class="rp-card rp-filtros"><div class="rp-lbl">Población</div>' +
+        '<div class="seg-vista" role="group" aria-label="Qué población mirar">' +
+          ["emp", "con", "gen"].map(function (k) { return '<button type="button" data-vista="' + k + '" aria-pressed="' + (k === repVista) + '">' + VISTAS[k].boton + "</button>"; }).join("") +
+        "</div>" +
+        '<div class="rp-lbl">Plantas</div><div class="pl-sel">' +
+          '<button class="pl-btn" type="button" id="btnPlantas" aria-expanded="' + repMenu + '" aria-controls="plMenu"><span>' + esc(textoPlantas()) + "</span>" +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>' +
+          menuPlantas() + "</div></div>" +
+      '<div class="rp-card kpi-hero">' + anillo(global, resp + " de " + (pob || "—") + " " + v.nombre + " respondieron") +
+        '<div><div class="k-lbl">' + v.titulo + '</div><div class="k-sub">' + resp + " de " + (pob || "—") + " " + v.nombre + "</div></div></div>" +
+      '<div class="rp-card">' +
+        '<div class="kl"><span>Respondieron' + (otras ? "<small>+" + otras + " de otras plantas</small>" : "") + "</span><b>" + resp + "</b></div>" +
+        '<div class="kl"><span>Faltan por responder</span><b>' + (pob ? Math.max(pob - resp, 0) : "—") + "</b></div>" +
+        '<div class="kl"><span>Plantas al 100 %</span><b>' + (conPob.length ? completas + " / " + conPob.length : "—") + "</b></div>" +
+      "</div>" +
+    "</div>" +
+    '<section class="rp-card rp-tcard"><div class="rp-tcab"><div><h3>' + (filas.length === 1 ? esc(filas[0].planta) : "Por planta") + '</h3><div class="sub">' + v.sub + "</div></div>" +
+      (filas.length > 1 ? '<label class="rep-orden">Ordenar <select id="selOrden"><option value="menor">Menor cumplimiento primero</option><option value="faltan">Más pendientes primero</option><option value="nombre">Por nombre</option></select></label>' : "") + "</div>" +
+      (faltaCifra ? '<p class="rep-aviso">Falta la cantidad de contratistas de ' + (filas.length === 1 ? "esta planta" : "algunas plantas") +
+        ": escríbala en la columna C de la hoja «Población» y pulse Actualizar. Mientras tanto se ven las respuestas, sin porcentaje.</p>" : "") +
+      '<div class="rep-tabla"><table><thead><tr><th>Planta</th><th class="num">Población</th><th class="num">Respondieron</th><th>Cumplimiento</th><th class="num">Faltan</th></tr></thead><tbody>' +
+      (filas.length ? filas.map(function (f) {
+        var etq = f.p === null ? "" : f.p > 1 ? '<span class="etq av" title="Más respuestas que población: revise la cifra en la hoja «Población»">⚠ Revisar población</span>' : f.p === 1 ? '<span class="etq ok">✓ Completa</span>' : "";
+        var tip = f.planta + ": " + f.resp + " de " + (f.pob || "—") + " " + v.nombre + " (" + fmtPct(f.p) + ")" + (f.falta ? " · faltan " + f.falta : "");
+        return '<tr><td class="pl"><span class="nom">' + esc(f.planta) + "</span>" + etq + '</td><td class="num" data-l="' + v.pob + '">' + (f.pob || "—") + '</td><td class="num" data-l="' + v.resp + '">' + f.resp + "</td>" +
+          '<td class="cump"><div class="fila">' + meter(f.p, tip) + "<b>" + fmtPct(f.p) + '</b></div></td><td class="num" data-l="Faltan">' + (f.pob ? f.falta : "—") + "</td></tr>";
+      }).join("") : '<tr class="vacio"><td colspan="5">Elija al menos una planta en «Plantas».</td></tr>') + "</tbody>" +
+      (filas.length > 1 ? '<tfoot><tr><td class="pl">Total</td><td class="num" data-l="' + v.pob + '">' + (pob || "—") + '</td><td class="num" data-l="' + v.resp + '">' + resp + '</td><td class="cump"><div class="fila">' +
+        meter(global, "Total: " + fmtPct(global)) + "<b>" + fmtPct(global) + '</b></div></td><td class="num" data-l="Faltan">' + (pob ? Math.max(pob - resp, 0) : "—") + "</td></tr></tfoot>" : "") +
+      "</table></div>" +
+      (otras ? (function (t) { return '<p class="rep-nota" data-tip="' + esc(t) + '">⚠ ' + esc(t) + "</p>"; })("Respuestas con una planta que no está en la hoja «Población»: " +
+        r.otras.filter(deOtra).map(function (o) { return o.planta + " (" + deOtra(o) + ")"; }).join(", ") + ".") : "") +
+      '<p class="rep-nota" data-tip="' + esc(nota) + '">ⓘ ' + esc(nota) + "</p>" +
+    "</section></div>";
   $("repPanel").innerHTML = html;
+  $("s-reporte").classList.add("dentro");
   if ($("selOrden")) $("selOrden").value = repOrden;
+  $("repPanel").querySelectorAll("[data-mixto]").forEach(function (c) { c.indeterminate = true; });
+  if (foco && $("repPanel").querySelector(foco)) $("repPanel").querySelector(foco).focus();
+  ajustarAltoReporte();
+}
+
+// En computador el reporte ocupa justo el alto de la ventana: nada que desplazar
+function ajustarAltoReporte() {
+  var p = $("repPanel");
+  if (p.hidden) return;
+  var arriba = p.getBoundingClientRect().top + window.pageYOffset;
+  p.style.setProperty("--rp-alto", Math.max(500, window.innerHeight - arriba - 14) + "px");
+  // Filas tan altas como quepan, sin que la tabla tenga que desplazarse
+  var t = p.querySelector(".rp-tcard .rep-tabla"), c = p.querySelector(".rp-tcard");
+  if (!t || getComputedStyle(t).overflowY !== "auto") return;
+  c.classList.remove("apretado");
+  for (var pad = 11; pad >= 2; pad--) {
+    p.style.setProperty("--fila-pad", pad + "px");
+    if (t.scrollHeight <= t.clientHeight) return;
+  }
+  c.classList.add("apretado");
+}
+
+/* ---------- Informe (imprimir, PDF o Excel) ---------- */
+
+function datosInforme() {
+  var filas = repDatos.plantas.filter(function (p) { return plantaElegida(p.planta); })
+    .sort(function (a, b) { return a.planta.localeCompare(b.planta); })
+    .map(function (p) { return { planta: p.planta, emp: filaVista(p, "emp"), con: filaVista(p, "con"), gen: filaVista(p, "gen") }; });
+  var tot = {};
+  ["emp", "con", "gen"].forEach(function (k) {
+    var pob = 0, resp = 0;
+    filas.forEach(function (f) { pob += f[k].pob; resp += f[k].resp; });
+    tot[k] = { pob: pob, resp: resp, p: pob ? resp / pob : null, falta: Math.max(pob - resp, 0) };
+  });
+  return { filas: filas, tot: tot };
+}
+
+function abrirInforme() {
+  var d = datosInforme(), r = repDatos, n = d.filas.length, todas = nombresPlantas();
+  if (!n) { toast("Elija al menos una planta para el informe."); return; }
+  var ahora = new Date().toLocaleString("es-CO", { timeZone: "America/Bogota", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  var celdas = function (x) {
+    return '<td class="n b">' + x.resp + '</td><td class="n">' + (x.pob || "—") + '</td><td class="pc"><span class="bar"><i style="width:' +
+      Math.min(100, Math.round((x.p || 0) * 100)) + '%"></i></span>' + fmtPct(x.p) + "</td>";
+  };
+  var kpi = function (k, t) {
+    var x = d.tot[k];
+    return '<div class="ik' + (k === "gen" ? " g" : "") + '"><div class="l">' + t + '</div><div class="v">' + fmtPct(x.p) + '</div><div class="s">' +
+      x.resp + " de " + (x.pob || "—") + " respondieron · faltan " + (x.pob ? x.falta : "—") + "</div></div>";
+  };
+  var sub = "<th>Respondieron</th><th>Población</th><th>Cumplimiento</th>";
+  var otras = n === todas.length ? r.otras.reduce(function (a, o) { return a + o.empleados + o.contratistas; }, 0) : 0;
+  $("infHoja").innerHTML =
+    '<div class="ih"><img alt="Holcim" src="' + document.querySelector("header .logo img").src + '"><div><h1>Informe de participación</h1>' +
+      "<p>Encuesta de Percepción de Cultura de Salud, Seguridad y Ambiente 2026 · Holcim Colombia</p></div>" +
+      '<div class="if">Generado el ' + esc(ahora) + "<br>Última respuesta " + fmtFecha(r.ultima) + "</div></div>" +
+    '<p class="ip"><b>Plantas incluidas:</b> ' + (n === todas.length ? "todas (" + n + ")" : n + " de " + todas.length + " — " + esc(d.filas.map(function (f) { return f.planta; }).join(", "))) + "</p>" +
+    '<div class="iks">' + kpi("gen", "Cumplimiento general") + kpi("emp", "Empleados Holcim") + kpi("con", "Contratistas") + "</div>" +
+    '<table class="it"><thead><tr><th rowspan="2">Planta</th><th colspan="3" class="b">Empleados Holcim</th><th colspan="3" class="b">Contratistas</th><th colspan="3" class="b">General</th><th rowspan="2" class="b">Faltan</th></tr>' +
+      '<tr>' + sub + sub + sub + "</tr></thead><tbody>" +
+      d.filas.map(function (f) { return "<tr><td>" + esc(f.planta) + "</td>" + celdas(f.emp) + celdas(f.con) + celdas(f.gen) + '<td class="n b">' + (f.gen.pob ? f.gen.falta : "—") + "</td></tr>"; }).join("") +
+    "</tbody>" + (n > 1 ? "<tfoot><tr><td>Total</td>" + celdas(d.tot.emp) + celdas(d.tot.con) + celdas(d.tot.gen) + '<td class="n b">' + (d.tot.gen.pob ? d.tot.gen.falta : "—") + "</td></tr></tfoot>" : "") + "</table>" +
+    '<p class="in">' + esc(r.notaPoblacion) + " Contratistas: cantidades por planta entregadas por H&amp;S (Transcem no aplica). En el general no se suman las respuestas de contratistas de una planta sin cantidad registrada." +
+      (otras ? " Hay " + otras + " respuestas con una planta que no está en la hoja «Población»: no entran en estas cifras." : "") +
+      " Cifras agregadas, sin datos de personas.</p>";
+  $("informe").hidden = false;
+  $("informe").scrollTop = 0;
+  document.body.classList.add("imprimiendo", "sin-scroll");
+  $("repTip").hidden = true;
+  setTimeout(function () { $("btnImprimir").focus(); }, 50);
+}
+
+function cerrarInforme() {
+  $("informe").hidden = true;
+  document.body.classList.remove("imprimiendo", "sin-scroll");
+  if ($("btnInforme")) $("btnInforme").focus();
+}
+
+// Excel: archivo .csv con punto y coma (Excel en español lo abre en columnas)
+function descargarExcel() {
+  var d = datosInforme();
+  var pc = function (x) { return x === null ? "" : (Math.round(x * 1000) / 10).toString().replace(".", ",") + "%"; };
+  var linea = function (nombre, e, c, g) { return [nombre, e.resp, e.pob, pc(e.p), c.resp, c.pob, pc(c.p), g.resp, g.pob, pc(g.p), g.falta]; };
+  var filas = [["Planta", "Empleados que respondieron", "Población empleados", "Cumplimiento empleados", "Contratistas que respondieron", "Población contratistas",
+    "Cumplimiento contratistas", "Total que respondieron", "Población total", "Cumplimiento general", "Faltan por responder"]]
+    .concat(d.filas.map(function (f) { return linea(f.planta, f.emp, f.con, f.gen); }), [linea("Total", d.tot.emp, d.tot.con, d.tot.gen)]);
+  var csv = "\ufeff" + filas.map(function (f) {
+    return f.map(function (x) { x = String(x); return /[";\r\n]/.test(x) ? '"' + x.replace(/"/g, '""') + '"' : x; }).join(";");
+  }).join("\r\n");
+  var hoy = new Date().toLocaleDateString("en-CA", { timeZone: "America/Bogota" });
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  a.download = "participacion-encuesta-hse-2026-" + hoy + ".csv";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  toast("Descargado: " + a.download);
 }
 
 // Nota al pasar el mouse por una barra
@@ -1669,15 +2000,40 @@ function iniciar() {
     pedirReporte({ usuario: u, clave: c });
   });
   $("repPanel").addEventListener("click", function (ev) {
-    if (ev.target.id === "btnActualizar") { var t = null; try { t = sessionStorage.getItem(CLAVE_TOKEN); } catch (e) {} pedirReporte({ token: t }); }
-    var vb = ev.target.closest("[data-vista]");
+    var t = ev.target;
+    if (t.closest("#btnActualizar")) { var tk = null; try { tk = sessionStorage.getItem(CLAVE_TOKEN); } catch (e) {} pedirReporte({ token: tk }); return; }
+    if (t.closest("#btnVolverRep")) { cerrarReporte(); return; }
+    if (t.closest("#btnInforme")) { repMenu = false; mostrarMenuPlantas(); abrirInforme(); return; }
+    if (t.closest("#btnPlantas")) { repMenu = !repMenu; mostrarMenuPlantas(); return; }
+    var rap = t.closest("[data-plantas]");
+    if (rap) { repSel = rap.getAttribute("data-plantas") === "todas" ? null : {}; pintarReporte(); return; }
+    var vb = t.closest("[data-vista]");
     if (vb) { repVista = vb.getAttribute("data-vista"); pintarReporte(); return; }
-    if (ev.target.id === "btnSalirRep") { try { sessionStorage.removeItem(CLAVE_TOKEN); } catch (e) {} repDatos = null; mostrarLogin(); }
+    if (t.closest("#btnSalirRep")) { try { sessionStorage.removeItem(CLAVE_TOKEN); } catch (e) {} repDatos = null; repSel = null; repMenu = false; mostrarLogin(); }
   });
   $("repPanel").addEventListener("change", function (ev) {
-    if (ev.target.id === "selOrden") { repOrden = ev.target.value; pintarReporte(); }
-    if (ev.target.id === "selPlanta") { repPlanta = ev.target.value; pintarReporte(); }
+    var t = ev.target;
+    if (t.id === "selOrden") { repOrden = t.value; pintarReporte(); }
+    if (t.hasAttribute("data-planta")) { elegirPlantas([t.getAttribute("data-planta")], t.checked); pintarReporte(); }
+    if (t.hasAttribute("data-grupo")) {
+      var g = t.getAttribute("data-grupo");
+      elegirPlantas(nombresPlantas().filter(function (n) { return grupoPlanta(n) === g; }), t.checked);
+      pintarReporte();
+    }
   });
+  $("repPanel").addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape" && repMenu) { ev.stopPropagation(); repMenu = false; mostrarMenuPlantas(); $("btnPlantas").focus(); }
+  });
+  document.addEventListener("click", function (ev) {
+    if (repMenu && !ev.target.closest(".pl-sel")) { repMenu = false; mostrarMenuPlantas(); }
+  });
+  window.addEventListener("resize", ajustarAltoReporte);
+  // Informe
+  $("btnImprimir").addEventListener("click", function () { window.print(); });
+  $("btnExcel").addEventListener("click", descargarExcel);
+  $("btnCerrarInf").addEventListener("click", cerrarInforme);
+  $("informe").addEventListener("click", function (ev) { if (ev.target === $("informe")) cerrarInforme(); });
+  document.addEventListener("keydown", function (ev) { if (ev.key === "Escape" && !$("informe").hidden) cerrarInforme(); }, true);
   $("repPanel").addEventListener("mousemove", tipReporte);
   $("repPanel").addEventListener("mouseleave", function () { $("repTip").hidden = true; });
   // Botones "Copiar enlace" (portada y final, solo en computador)
