@@ -1491,11 +1491,11 @@ function filaVista(p, vista) {
   var pob = emp ? p.poblacion : gen ? p.poblacion + (pc || 0) : (pc || 0);
   // En el general, sin cantidad de contratistas sus respuestas no se suman (inflarían el %)
   var resp = emp ? p.empleados : gen ? p.empleados + (pc === null ? 0 : p.contratistas) : p.contratistas;
-  // Para el porcentaje, cada grupo cuenta hasta su población: las respuestas de más se ven
-  // en «Respondieron» pero no suben el cumplimiento de la planta ni el general
+  // Las respuestas de más (por encima de la población) también suman al porcentaje;
+  // «demas» solo sirve para marcarlas y revisar la cifra de población
   var ce = Math.min(p.empleados, p.poblacion), cc = pc === null ? 0 : Math.min(p.contratistas, pc);
-  var cuenta = emp ? ce : gen ? ce + cc : cc;
-  return { planta: p.planta, pob: pob, resp: resp, cuenta: cuenta, demas: resp - cuenta, p: pob ? cuenta / pob : null, falta: pob - cuenta, sinCifra: !emp && pc === null };
+  var demas = resp - (emp ? ce : gen ? ce + cc : cc);
+  return { planta: p.planta, pob: pob, resp: resp, demas: demas, p: pob ? resp / pob : null, falta: Math.max(pob - resp, 0), sinCifra: !emp && pc === null };
 }
 
 // Plantas elegidas: repSel null = todas; si no, un objeto con las elegidas
@@ -1572,7 +1572,7 @@ function pintarReporte() {
   };
   filas.sort(orden[repOrden]);
   var suma = function (campo) { return filas.reduce(function (a, f) { return a + (f[campo] || 0); }, 0); };
-  var pob = suma("pob"), resp = suma("resp"), falta = suma("falta"), demas = suma("demas"), global = pob ? suma("cuenta") / pob : null;
+  var pob = suma("pob"), resp = suma("resp"), falta = Math.max(pob - resp, 0), demas = suma("demas"), global = pob ? resp / pob : null;
   // Respuestas de plantas que no están en «Población» (solo cuentan con todas las plantas)
   var deOtra = function (o) { return repVista === "emp" ? o.empleados : repVista === "con" ? o.contratistas : o.empleados + o.contratistas; };
   var otras = repSel ? 0 : r.otras.reduce(function (a, o) { return a + deOtra(o); }, 0);
@@ -1602,7 +1602,7 @@ function pintarReporte() {
       '<div class="rp-card kpi-hero">' + anillo(global, resp + " de " + (pob || "—") + " " + v.nombre + " respondieron") +
         '<div><div class="k-lbl">' + v.titulo + '</div><div class="k-sub">' + resp + " de " + (pob || "—") + " " + v.nombre + "</div></div></div>" +
       '<div class="rp-card">' +
-        '<div class="kl"><span>Respondieron' + (demas ? "<small>" + demas + " por encima de la población (no suben el %)</small>" : "") + (otras ? "<small>+" + otras + " de otras plantas</small>" : "") + "</span><b>" + resp + "</b></div>" +
+        '<div class="kl"><span>Respondieron' + (demas ? "<small>" + demas + " por encima de la población (sí suman al %)</small>" : "") + (otras ? "<small>+" + otras + " de otras plantas</small>" : "") + "</span><b>" + resp + "</b></div>" +
         '<div class="kl"><span>Faltan por responder</span><b>' + (pob ? falta : "—") + "</b></div>" +
         '<div class="kl"><span>Plantas al 100 %</span><b>' + (conPob.length ? completas + " / " + conPob.length : "—") + "</b></div>" +
       "</div>" +
@@ -1613,7 +1613,7 @@ function pintarReporte() {
         ": escríbala en la columna C de la hoja «Población» y pulse Actualizar. Mientras tanto se ven las respuestas, sin porcentaje.</p>" : "") +
       '<div class="rep-tabla"><table><thead><tr><th>Planta</th><th class="num">Población</th><th class="num">Respondieron</th><th>Cumplimiento</th><th class="num">Faltan</th></tr></thead><tbody>' +
       (filas.length ? filas.map(function (f) {
-        var etq = f.p === null ? "" : f.demas > 0 ? '<span class="etq av" title="' + f.demas + ' respuestas por encima de la población: se cuentan en Respondieron pero el cumplimiento queda en el máximo. Revise la cifra en la hoja «Población».">⚠ ' + f.demas + " de más</span>" : f.p === 1 ? '<span class="etq ok">✓ Completa</span>' : "";
+        var etq = f.p === null ? "" : f.demas > 0 ? '<span class="etq av" title="' + f.demas + ' respuestas por encima de la población: se cuentan en Respondieron y en el cumplimiento. Revise la cifra en la hoja «Población».">⚠ ' + f.demas + " de más</span>" : f.p === 1 ? '<span class="etq ok">✓ Completa</span>' : "";
         var tip = f.planta + ": " + f.resp + " de " + (f.pob || "—") + " " + v.nombre + " (" + fmtPct(f.p) + ")" + (f.falta ? " · faltan " + f.falta : "");
         return '<tr><td class="pl"><span class="nom">' + esc(f.planta) + "</span>" + etq + '</td><td class="num" data-l="' + v.pob + '">' + (f.pob || "—") + '</td><td class="num" data-l="' + v.resp + '">' + f.resp + "</td>" +
           '<td class="cump"><div class="fila">' + meter(f.p, tip) + "<b>" + fmtPct(f.p) + '</b></div></td><td class="num" data-l="Faltan">' + (f.pob ? f.falta : "—") + "</td></tr>";
@@ -1658,9 +1658,9 @@ function datosInforme() {
     .map(function (p) { return { planta: p.planta, emp: filaVista(p, "emp"), con: filaVista(p, "con"), gen: filaVista(p, "gen") }; });
   var tot = {};
   ["emp", "con", "gen"].forEach(function (k) {
-    var pob = 0, resp = 0, cuenta = 0, falta = 0;
-    filas.forEach(function (f) { pob += f[k].pob; resp += f[k].resp; cuenta += f[k].cuenta; falta += f[k].falta; });
-    tot[k] = { pob: pob, resp: resp, cuenta: cuenta, demas: resp - cuenta, p: pob ? cuenta / pob : null, falta: falta };
+    var pob = 0, resp = 0, demas = 0;
+    filas.forEach(function (f) { pob += f[k].pob; resp += f[k].resp; demas += f[k].demas; });
+    tot[k] = { pob: pob, resp: resp, demas: demas, p: pob ? resp / pob : null, falta: Math.max(pob - resp, 0) };
   });
   return { filas: filas, tot: tot };
 }
@@ -1669,8 +1669,8 @@ function abrirInforme() {
   var d = datosInforme(), r = repDatos, n = d.filas.length, todas = nombresPlantas();
   if (!n) { toast("Elija al menos una planta para el informe."); return; }
   var ahora = new Date().toLocaleString("es-CO", { timeZone: "America/Bogota", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
-  // En el informe el cumplimiento llega hasta 100 % y va sin decimales
-  var pcInf = function (x) { return x === null ? "—" : Math.round(Math.min(1, x) * 100) + " %"; };
+  // En el informe el cumplimiento va sin decimales; la barra llega hasta el final en 100 %
+  var pcInf = function (x) { return x === null ? "—" : Math.round(x * 100) + " %"; };
   var celdas = function (x) {
     return '<td class="n b">' + x.resp + '</td><td class="n">' + (x.pob || "—") + '</td><td class="pc"><span class="c"><span class="bar"><i style="width:' +
       Math.min(100, Math.round((x.p || 0) * 100)) + '%"></i></span><b>' + pcInf(x.p) + "</b></span></td>";
@@ -1692,7 +1692,7 @@ function abrirInforme() {
       '<tr>' + sub + sub + sub + "</tr></thead><tbody>" +
       d.filas.map(function (f) { return "<tr><td>" + esc(f.planta) + "</td>" + celdas(f.emp) + celdas(f.con) + celdas(f.gen) + '<td class="n b">' + (f.gen.pob ? f.gen.falta : "—") + "</td></tr>"; }).join("") +
     "</tbody>" + (n > 1 ? "<tfoot><tr><td>Total</td>" + celdas(d.tot.emp) + celdas(d.tot.con) + celdas(d.tot.gen) + '<td class="n b">' + (d.tot.gen.pob ? d.tot.gen.falta : "—") + "</td></tr></tfoot>" : "") + "</table>" +
-    '<p class="in">' + esc(r.notaPoblacion) + " Contratistas: cantidades por planta entregadas por H&amp;S (Transcem no aplica). En el general no se suman las respuestas de contratistas de una planta sin cantidad registrada. El cumplimiento llega hasta 100 %: si una planta tiene más respuestas que población, las de más se cuentan en «Respondieron» pero no suben el porcentaje de la planta ni el general." +
+    '<p class="in">' + esc(r.notaPoblacion) + " Contratistas: cantidades por planta entregadas por H&amp;S (Transcem no aplica). En el general no se suman las respuestas de contratistas de una planta sin cantidad registrada. Si una planta tiene más respuestas que población, las de más también suman al cumplimiento (puede pasar de 100 %): revise esa cifra de población." +
       (otras ? " Hay " + otras + " respuestas con una planta que no está en la hoja «Población»: no entran en estas cifras." : "") +
       " Cifras agregadas, sin datos de personas.</p>";
   $("informe").hidden = false;
@@ -1711,7 +1711,7 @@ function cerrarInforme() {
 // Excel: archivo .csv con punto y coma (Excel en español lo abre en columnas)
 function descargarExcel() {
   var d = datosInforme();
-  var pc = function (x) { return x === null ? "" : Math.round(Math.min(1, x) * 100) + "%"; };
+  var pc = function (x) { return x === null ? "" : Math.round(x * 100) + "%"; };
   var linea = function (nombre, e, c, g) { return [nombre, e.resp, e.pob, pc(e.p), c.resp, c.pob, pc(c.p), g.resp, g.pob, pc(g.p), g.falta]; };
   var filas = [["Planta", "Empleados que respondieron", "Población empleados", "Cumplimiento empleados", "Contratistas que respondieron", "Población contratistas",
     "Cumplimiento contratistas", "Total que respondieron", "Población total", "Cumplimiento general", "Faltan por responder"]]
